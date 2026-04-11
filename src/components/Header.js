@@ -11,6 +11,7 @@ const NAV_LINKS = [
     href: "/martyr",
   },
   { label: "Gallery", href: "/gallery" },
+  { label: "Events", href: "/events" },
   { label: "Provisional", href: "/provisional" },
   { label: "Donate Us", href: "/donate", isDonate: true },
   { label: "Contact", href: "/contact" },
@@ -48,7 +49,7 @@ function DropdownItem({ link }) {
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1 min-w-[210px] bg-white  border-t-[3px] border-t-[#FF671F] shadow-xl rounded-b z-50 animate-[fadeDown_0.18s_ease_forwards]">
+        <div className="absolute top-full left-0 mt-1 min-w-[210px] bg-white border-t-[3px] border-t-[#FF671F] shadow-xl rounded-b z-50 animate-[fadeDown_0.18s_ease_forwards]">
           {link.dropdown.map((sub) => (
             <Link
               key={sub.label}
@@ -85,16 +86,33 @@ export default function Header() {
         }
         .nav-font { font-family: 'Lato', sans-serif; }
         .logo-font { font-family: 'Cinzel', serif; }
+
+        @keyframes shimmer {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        .membership-btn {
+          background: linear-gradient(90deg, #FF671F 0%, #e85510 40%, #FF671F 60%, #e85510 100%);
+          background-size: 200% auto;
+          transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .membership-btn:hover {
+          background-position: right center;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 14px rgba(255, 103, 31, 0.45);
+        }
+        .membership-btn:active {
+          transform: translateY(0);
+        }
       `}</style>
 
       <nav className={`nav-font sticky top-0 z-50 bg-white transition-shadow duration-300 ${scrolled ? "shadow-2xl" : "shadow-md"}`}>
-
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center h-16 gap-3">
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 flex-shrink-0 group" aria-label="Home">
-            <div className="w-11 h-11 flex items-center justify-content-center flex-shrink-0 ">
+            <div className="w-11 h-11 flex items-center justify-content-center flex-shrink-0">
               <img src="/logo.png" />
             </div>
           </Link>
@@ -125,6 +143,21 @@ export default function Header() {
                 </li>
               )
             )}
+
+            {/* Membership Form Button */}
+            <li className="ml-2">
+              <Link
+                href="/membership"
+                className="membership-btn inline-flex items-center gap-1.5 px-4 py-2 text-[11px] font-bold tracking-wider uppercase text-white rounded whitespace-nowrap"
+              >
+                {/* Star/medal icon */}
+                <svg className="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+                </svg>
+                <span>Veer Nari / Veer Mata-Pita</span>
+                <span className="hidden xl:inline">Membership Form</span>
+              </Link>
+            </li>
           </ul>
 
           {/* Hamburger */}
@@ -141,13 +174,13 @@ export default function Header() {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`lg:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-[600px] border-t-2 border-[#FF671F]" : "max-h-0"}`}>
+        <div className={`lg:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-[700px] border-t-2 border-[#FF671F]" : "max-h-0"}`}>
           {NAV_LINKS.map((link) =>
             link.isDonate ? (
               <Link
                 key={link.label}
                 href={link.href}
-                className="block mx-4 my-3 px-4 py-3 text-[11px] font-bold tracking-widest uppercase text-center bg-[#293C86] text-[#FF671F] rounded hover:bg-[#c8a84b] hover:text-[#1a2744] transition-colors duration-200"
+                className="block mx-4 my-3 px-4 py-3 text-[11px] font-bold tracking-widest uppercase text-center bg-[#293C86] text-[#FF671F] rounded hover:bg-[#2B4DD0] transition-colors duration-200"
                 onClick={() => setMenuOpen(false)}
               >
                 {link.label}
@@ -191,6 +224,18 @@ export default function Header() {
               </Link>
             )
           )}
+
+          {/* Mobile Membership Button */}
+          <Link
+            href="/membership"
+            className="flex items-center justify-center gap-2 mx-4 my-3 px-4 py-3 text-[11px] font-bold tracking-wider uppercase text-center text-white rounded membership-btn"
+            onClick={() => setMenuOpen(false)}
+          >
+            <svg className="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+            </svg>
+            Veer Nari / Veer Mata-Pita Membership Form
+          </Link>
         </div>
       </nav>
     </>
