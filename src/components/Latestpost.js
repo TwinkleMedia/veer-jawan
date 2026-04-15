@@ -26,7 +26,7 @@ export default function Latestpost() {
                 setPosts(images)
             }
         } catch (error) {
-            console.error("failed to fetch gallery:", err)
+            console.error("failed to fetch gallery:", error)
         } finally {
             setLoading(false)
         }

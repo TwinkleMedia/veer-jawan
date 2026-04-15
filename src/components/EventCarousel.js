@@ -227,13 +227,13 @@ export default function EventsCarousel() {
                                                 )}
 
                                                 {/* CTA */}
-                                                <a href="/events"
+                                                <Link href="/events"
                                                     className="mt-auto flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 active:scale-[0.98] text-white text-xs font-bold uppercase tracking-wide transition-all shadow-sm whitespace-nowrap">
-                                                    Register / Learn More
+                                                    Learn More
                                                     <svg className="w-3 h-3 shrink-0" viewBox="0 0 12 12" fill="none">
                                                         <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                     </svg>
-                                                </a>
+                                                </Link>
                                             </div>
                                         </div>
                                     </div>
