@@ -1,5 +1,6 @@
 import About from "@/components/About";
 import Banner from "@/components/Banner";
+import CertificatesSection from "@/components/certificates";
 import EventsCarousel from "@/components/EventCarousel";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -14,6 +15,7 @@ export default function Home() {
       <Banner />
       <About />
       <Latestpost />
+      <CertificatesSection/>
       <EventsCarousel/>
       <Footer />
     </>

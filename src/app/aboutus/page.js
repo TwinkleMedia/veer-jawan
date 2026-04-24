@@ -1,3 +1,4 @@
+import CertificatesSection from '@/components/certificates'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import { Topnav } from '@/components/Topnav'
@@ -276,6 +277,7 @@ export default function About() {
 
                 </div>
             </section>
+            <CertificatesSection/>
             <Footer />
         </>
     )
