@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Topnav } from "@/components/Topnav";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import DonateButton from "@/components/DonateButton";
 import Link from "next/link";
 
 function formatDate(iso) {
@@ -257,7 +258,9 @@ export default function EventsCarousel() {
 
   // ── Carousel ──────────────────────────────────────────────────────────────
   return (
+    
     <PageWrapper>
+      <DonateButton/>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');`}</style>
 
       <section

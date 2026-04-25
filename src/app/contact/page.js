@@ -3,6 +3,7 @@
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import { Topnav } from '@/components/Topnav'
+import DonateButton from '@/components/DonateButton';
 import { Mail, MapPin, Phone } from 'lucide-react'
 
 import Link from 'next/link'
@@ -35,6 +36,7 @@ export default function contact() {
 
     return (
         <>
+            <DonateButton/>
             <Topnav />
             <Header />
             {/* Hero Section */}

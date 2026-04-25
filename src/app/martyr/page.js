@@ -5,9 +5,10 @@ import Header from "@/components/Header";
 import { Topnav } from "@/components/Topnav";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-
+import DonateButton from "@/components/DonateButton";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const PAGE_SIZE = 8;
+
 
 export default function Martyr() {
   const [martyrs, setMartyrs] = useState([]);
@@ -56,6 +57,8 @@ export default function Martyr() {
 
   return (
     <>
+      <DonateButton/>
+      
       <Topnav />
       <Header />
 
