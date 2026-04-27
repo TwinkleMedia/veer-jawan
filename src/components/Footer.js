@@ -19,10 +19,19 @@ const EmailIcon = () => (
     </svg>
 );
 
+const usefulLinks = [
+    { label: "Home",               href: "/" },
+    { label: "About Us",           href: "/aboutus" },
+    { label: "Gallery",            href: "/gallery" },
+    { label: "Contact",            href: "/contect" },
+    { label: "Privacy Policy",     href: "/privacy-policy"},
+    { label: "Terms & Conditions", href: "/terms-conditions"},
+];
+
 export default function Footer() {
     return (
         <footer className="w-full font-sans">
-            {/* Top colored border */}
+            {/* Top tricolor border */}
             <div className="flex flex-col h-2">
                 <div className="flex-1 bg-orange-500" />
                 <div className="flex-1 bg-white" />
@@ -47,13 +56,28 @@ export default function Footer() {
                     <div>
                         <h3 className="text-blue-900 font-bold text-xl mb-4">Useful Links</h3>
                         <ul className="space-y-2">
-                            {["Home", "About Us", "Gallery", "Contact"].map((link) => (
-                                <li key={link}>
+                            {usefulLinks.map((link) => (
+                                <li key={link.label}>
                                     <Link
-                                        href="#"
-                                        className="text-gray-600 text-sm hover:text-orange-500 transition-colors duration-200"
+                                        href={link.href}
+                                        target={link.external ? "_blank" : undefined}
+                                        rel={link.external ? "noopener noreferrer" : undefined}
+                                        className="text-gray-600 text-sm hover:text-orange-500 transition-colors duration-200 flex items-center gap-1.5 group"
                                     >
-                                        {link}
+                                        {/* Small arrow indicator */}
+                                        <svg
+                                            className="w-3 h-3 text-orange-400 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all duration-200"
+                                            fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"
+                                        >
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                        {link.label}
+                                        {/* External link icon for policy pages */}
+                                        {link.external && (
+                                            <svg className="w-3 h-3 text-gray-400 ml-0.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6m0 0v6m0-6L10 14" />
+                                            </svg>
+                                        )}
                                     </Link>
                                 </li>
                             ))}
@@ -84,7 +108,15 @@ export default function Footer() {
 
             {/* Bottom bar */}
             <div className="bg-gradient-to-r from-orange-600 via-orange-300 to-green-800 text-white text-center text-sm py-4 px-4">
-                Copyrights © 2026 All Rights Reserved. Powered by <a href="https://www.twinklemediahub.com/" target="_blank">Twinkle Media Hub</a>
+                Copyrights © 2026 All Rights Reserved. Powered by{" "}
+                <a
+                    href="https://www.twinklemediahub.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-white/80 transition-colors"
+                >
+                    Twinkle Media Hub
+                </a>
             </div>
         </footer>
     );
