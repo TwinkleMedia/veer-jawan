@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Latestpost from "@/components/Latestpost";
 import { Topnav } from "@/components/Topnav";
 import DonateButton from "@/components/DonateButton"
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <EventsCarousel/>
       <Footer />
       <DonateButton/>
+      <WhatsAppButton/>
     </>
   );
 }

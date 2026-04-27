@@ -5,6 +5,7 @@ import { Topnav } from "@/components/Topnav";
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import DonateButton from "@/components/DonateButton";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -321,6 +322,7 @@ export default function GallerySection() {
   return (
     <>
       <DonateButton/>
+      <WhatsAppButton/>
       <Topnav />
       <Header />
 
