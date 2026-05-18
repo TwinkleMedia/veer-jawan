@@ -23,7 +23,7 @@ export default function Latestpost() {
                         caption:item.fileName ?? "",
                     }))
                 )
-                setPosts(images)
+                setPosts(images)        
             }
         } catch (error) {
             console.error("failed to fetch gallery:", error)
