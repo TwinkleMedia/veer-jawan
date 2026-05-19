@@ -31,7 +31,10 @@ function getVimeoId(url) {
   }
 }
 
-function GalleryCard({ item }) {
+// Cycles through portrait → square → landscape for visual rhythm
+const ASPECT_SHAPES = ["aspect-[3/4]", "aspect-square", "aspect-[4/3]"];
+
+function GalleryCard({ item, index }) {
   const youtubeId = item.type === "video" ? getYouTubeId(item.url) : null;
   const vimeoId =
     item.type === "video" && !youtubeId ? getVimeoId(item.url) : null;
@@ -43,35 +46,36 @@ function GalleryCard({ item }) {
     : null;
 
   const videoLabel = youtubeId ? "YouTube" : vimeoId ? "Vimeo" : "Video";
-
-  const handleClick = () => {
-    if (item.type === "video") {
-      window.open(item.url, "_blank", "noopener,noreferrer");
-    }
-  };
+  const shape = ASPECT_SHAPES[index % ASPECT_SHAPES.length];
 
   return (
     <div
-      className="relative overflow-hidden rounded-xl group bg-gray-100"
-      style={{
-        aspectRatio: "4/3",
-        cursor: item.type === "video" ? "pointer" : "default",
-      }}
-      onClick={handleClick}
+      className="relative overflow-hidden rounded-2xl group bg-gray-100 cursor-pointer"
+      style={{ breakInside: "avoid", marginBottom: "10px" }}
+      onClick={() =>
+        item.type === "video" &&
+        window.open(item.url, "_blank", "noopener,noreferrer")
+      }
     >
-      {/* Thumbnail — image or video poster */}
-      {thumbnail && (
+      {/* Tricolor top accent */}
+      <div className="absolute top-0 left-0 right-0 flex h-[3px] z-20">
+        <div className="flex-1 bg-orange-500" />
+        <div className="flex-1 bg-white" />
+        <div className="flex-1 bg-green-700" />
+      </div>
+
+      {/* Thumbnail */}
+      {thumbnail ? (
         <img
           src={thumbnail}
           alt={item.title}
           loading="lazy"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className={`w-full object-cover ${shape} group-hover:scale-105 transition-transform duration-500 ease-out`}
         />
-      )}
-
-      {/* Fallback when no thumbnail */}
-      {!thumbnail && (
-        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+      ) : (
+        <div
+          className={`w-full ${shape} flex items-center justify-center bg-gray-200`}
+        >
           <svg
             className="w-10 h-10 text-gray-400"
             fill="none"
@@ -88,23 +92,16 @@ function GalleryCard({ item }) {
         </div>
       )}
 
-      {/* Tricolor top bar */}
-      <div className="absolute top-0 left-0 right-0 flex h-[3px] z-20">
-        <div className="flex-1 bg-orange-500" />
-        <div className="flex-1 bg-white" />
-        <div className="flex-1 bg-green-700" />
-      </div>
+      {/* Hover gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
 
-      {/* Video: play button + badge */}
+      {/* Video controls */}
       {item.type === "video" && (
         <>
-          {/* Dark scrim on hover */}
-          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-
-          {/* Play button */}
-          <div className="absolute inset-0 flex items-center justify-center z-20">
+          {/* Play button — always visible */}
+          <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
             <div
-              className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-lg
+              className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-md
               group-hover:scale-110 group-hover:bg-white transition-all duration-200"
             >
               <svg
@@ -117,8 +114,8 @@ function GalleryCard({ item }) {
             </div>
           </div>
 
-          {/* Video source badge */}
-          <div className="absolute top-2.5 right-2.5 z-30 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/90 shadow-sm">
+          {/* Source badge */}
+          <div className="absolute top-3 right-3 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 shadow-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
             <span className="text-[9px] font-bold text-gray-600 uppercase tracking-wider">
               {videoLabel}
@@ -129,31 +126,34 @@ function GalleryCard({ item }) {
 
       {/* Bottom label — slides up on hover */}
       <div
-        className="absolute bottom-0 left-0 right-0 z-20
-        bg-gradient-to-t from-black/65 to-transparent
-        px-3 py-3
+        className="absolute bottom-0 left-0 right-0 z-20 px-3 pb-3 pt-6
         translate-y-full group-hover:translate-y-0
-        transition-transform duration-300"
+        transition-transform duration-300 ease-out"
       >
-        <p className="text-white text-xs font-semibold truncate">{item.title}</p>
-        <p className="text-orange-300 text-[10px] truncate">{item.galleryTitle}</p>
+        <p className="text-white text-[11px] font-semibold leading-snug truncate">
+          {item.title}
+        </p>
+        <p className="text-orange-300 text-[9px] mt-0.5 truncate">
+          {item.galleryTitle}
+        </p>
       </div>
     </div>
   );
 }
 
-function SkeletonCard() {
+function SkeletonCard({ index = 0 }) {
+  const shape = ASPECT_SHAPES[index % ASPECT_SHAPES.length];
   return (
     <div
-      className="rounded-xl bg-gray-200 animate-pulse"
-      style={{ aspectRatio: "4/3" }}
+      className={`rounded-2xl bg-gray-200 animate-pulse ${shape}`}
+      style={{ breakInside: "avoid", marginBottom: "10px" }}
     />
   );
 }
 
 function EmptyState() {
   return (
-    <div className="col-span-full flex flex-col items-center justify-center py-24 text-center text-gray-400">
+    <div className="flex flex-col items-center justify-center py-24 text-center text-gray-400">
       <svg
         className="w-12 h-12 mb-3 opacity-30"
         fill="none"
@@ -177,7 +177,7 @@ function EmptyState() {
 
 function ErrorState({ message, onRetry }) {
   return (
-    <div className="col-span-full flex flex-col items-center justify-center py-24 text-center">
+    <div className="flex flex-col items-center justify-center py-24 text-center">
       <p className="text-gray-500 font-semibold text-sm mb-1">
         Failed to load gallery
       </p>
@@ -271,7 +271,7 @@ export default function GallerySection() {
         <div className="max-w-6xl mx-auto">
 
           {/* Section heading */}
-          <div className="mb-6 text-center">
+          <div className="mb-8 text-center">
             <h2 className="text-2xl font-bold text-gray-800">Our Gallery</h2>
             <p className="text-sm text-gray-500 mt-1">
               Photos &amp; videos from our events and activities
@@ -283,20 +283,35 @@ export default function GallerySection() {
             </div>
           </div>
 
-          {/* Gallery grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {loading ? (
-              Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
-            ) : error ? (
-              <ErrorState message={error} onRetry={fetchGallery} />
-            ) : flatItems.length === 0 ? (
-              <EmptyState />
-            ) : (
-              flatItems.map((item, i) => (
-                <GalleryCard key={item._id || i} item={item} />
-              ))
-            )}
-          </div>
+          {/* ── Masonry Gallery ── */}
+          {loading ? (
+            /* Skeleton grid */
+            <div
+              style={{
+                columns: "4 180px",
+                columnGap: "10px",
+              }}
+            >
+              {Array.from({ length: 12 }).map((_, i) => (
+                <SkeletonCard key={i} index={i} />
+              ))}
+            </div>
+          ) : error ? (
+            <ErrorState message={error} onRetry={fetchGallery} />
+          ) : flatItems.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <div
+              style={{
+                columns: "4 180px",
+                columnGap: "10px",
+              }}
+            >
+              {flatItems.map((item, i) => (
+                <GalleryCard key={item._id || i} item={item} index={i} />
+              ))}
+            </div>
+          )}
 
         </div>
       </main>
