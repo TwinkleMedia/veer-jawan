@@ -103,6 +103,21 @@ export default function Header() {
         .membership-btn:active {
           transform: translateY(0);
         }
+
+        /* New Membership button style — distinct from the Veer Nari button */
+        .new-membership-btn {
+          background: linear-gradient(90deg, #293C86 0%, #1a2860 40%, #293C86 60%, #1a2860 100%);
+          background-size: 200% auto;
+          transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .new-membership-btn:hover {
+          background-position: right center;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 14px rgba(41, 60, 134, 0.5);
+        }
+        .new-membership-btn:active {
+          transform: translateY(0);
+        }
       `}</style>
 
       <nav className={`nav-font sticky top-0 z-50 bg-white transition-shadow duration-300 ${scrolled ? "shadow-2xl" : "shadow-md"}`}>
@@ -143,7 +158,7 @@ export default function Header() {
               )
             )}
 
-            {/* Membership Form Button */}
+            {/* Veer Nari / Veer Mata-Pita Membership Form Button */}
             <li className="ml-2">
               <Link
                 href="/membership"
@@ -173,7 +188,7 @@ export default function Header() {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`lg:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-[700px] border-t-2 border-[#FF671F]" : "max-h-0"}`}>
+        <div className={`lg:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-[800px] border-t-2 border-[#FF671F]" : "max-h-0"}`}>
           {NAV_LINKS.map((link) =>
             link.isDonate ? (
               <Link
@@ -224,10 +239,10 @@ export default function Header() {
             )
           )}
 
-          {/* Mobile Membership Button */}
+          {/* Mobile Veer Nari Membership Button */}
           <Link
             href="/membership"
-            className="flex items-center justify-center gap-2 mx-4 my-3 px-4 py-3 text-[11px] font-bold tracking-wider uppercase text-center text-white rounded membership-btn"
+            className="flex items-center justify-center gap-2 mx-4 mt-3 px-4 py-3 text-[11px] font-bold tracking-wider uppercase text-center text-white rounded membership-btn"
             onClick={() => setMenuOpen(false)}
           >
             <svg className="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">

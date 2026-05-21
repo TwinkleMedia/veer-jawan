@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function Latestpost() {
   const [posts, setPosts] = useState([]);
@@ -7,7 +7,7 @@ export default function Latestpost() {
 
   const [lightbox, setLightbox] = useState(null);
 
-  useState(()=>{
+  useEffect(()=>{
     const fetchGallery = async () =>{
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/gallery`)
@@ -23,7 +23,7 @@ export default function Latestpost() {
                         caption:item.fileName ?? "",
                     }))
                 )
-                setPosts(images)
+                setPosts(images)        
             }
         } catch (error) {
             console.error("failed to fetch gallery:", error)
