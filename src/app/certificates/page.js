@@ -79,8 +79,9 @@ export default function CertificatesSection() {
   const [dragStart, setDragStart]       = useState(0);
   const [dragDelta, setDragDelta]       = useState(0);
 
-  const trackRef    = useRef(null);
-  const autoPlayRef = useRef(null);
+  const trackRef      = useRef(null);
+  const containerRef  = useRef(null);
+  const autoPlayRef   = useRef(null);
 
   // ── Fetch ─────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -136,9 +137,47 @@ export default function CertificatesSection() {
     setDragDelta(0);
   };
 
-  // ── Card width for offset calc ────────────────────────────────────────────
-  const CARD_W   = 320 + 24; // w-80 (320px) + gap-6 (24px)
-  const offset   = current * -CARD_W + dragDelta;
+  // ── Centered offset calc ──────────────────────────────────────────────────
+  // Instead of left-aligning the track, we compute how much to shift so the
+  // active card sits in the middle of the visible container.
+  //
+  // card width:  288px (w-72) on mobile, 320px (w-80) on ≥md
+  // gap:          24px (gap-6)
+  // We read the actual container width at runtime so it's always exact.
+
+  const CARD_W_DEFAULT = 344; // fallback: 320 + 24
+
+  const getCardWidth = useCallback(() => {
+    if (!trackRef.current) return CARD_W_DEFAULT;
+    const firstChild = trackRef.current.firstElementChild;
+    if (!firstChild) return CARD_W_DEFAULT;
+    // card width + gap
+    return firstChild.getBoundingClientRect().width + 24;
+  }, []);
+
+  const getContainerWidth = useCallback(() => {
+    if (!containerRef.current) return 0;
+    return containerRef.current.getBoundingClientRect().width;
+  }, []);
+
+  // Recalculate on every render so resize is handled
+  const [cardW, setCardW] = useState(CARD_W_DEFAULT);
+  const [containerW, setContainerW] = useState(0);
+
+  useEffect(() => {
+    const update = () => {
+      setCardW(getCardWidth());
+      setContainerW(getContainerWidth());
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [getCardWidth, getContainerWidth, certificates]);
+
+  // Center the active card:
+  // offset = -(current * cardW) + (containerW / 2) - (cardW / 2)
+  const centeredOffset = -(current * cardW) + containerW / 2 - cardW / 2;
+  const offset = centeredOffset + dragDelta;
 
   if (error) {
     return (
@@ -198,7 +237,7 @@ export default function CertificatesSection() {
                 {/* Prev button */}
                 <button
                   onClick={prev}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-20
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-20
                     w-11 h-11 rounded-full bg-white shadow-lg border border-gray-100
                     flex items-center justify-center text-[#293C86]
                     hover:bg-[#293C86] hover:text-white hover:border-[#293C86]
@@ -212,7 +251,7 @@ export default function CertificatesSection() {
                 {/* Next button */}
                 <button
                   onClick={next}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-20
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-20
                     w-11 h-11 rounded-full bg-white shadow-lg border border-gray-100
                     flex items-center justify-center text-[#293C86]
                     hover:bg-[#293C86] hover:text-white hover:border-[#293C86]
@@ -223,8 +262,8 @@ export default function CertificatesSection() {
                   </svg>
                 </button>
 
-                {/* Overflow clip */}
-                <div className="overflow-hidden mx-8 md:mx-12">
+                {/* Overflow clip — ref here for width measurement */}
+                <div ref={containerRef} className="overflow-hidden mx-14">
                   {/* Draggable track */}
                   <div
                     ref={trackRef}
