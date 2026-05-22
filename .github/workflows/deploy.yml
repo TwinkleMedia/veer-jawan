@@ -3,7 +3,7 @@ name: Deploy Client
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
@@ -19,7 +19,7 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
             cd /var/www/veer-jawan
-            git pull origin master
+            git pull origin main
             npm install
             npm run build
             pm2 restart client
