@@ -157,7 +157,7 @@ export async function generate80GReceipt({
 
   // ── 1. DONATION RECEIPT TITLE ──────────────────────────────────────────
   const titleText = "DONATION RECEIPT";
-  const titleSize = 16;
+  const titleSize = 18;
   const titleW    = bold.widthOfTextAtSize(titleText, titleSize);
   // Center it in the content area
   const titleX    = CX + (CW - titleW) / 2;
