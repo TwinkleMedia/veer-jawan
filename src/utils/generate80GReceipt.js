@@ -8,29 +8,12 @@
  *  1. Place the letterhead PDF at:  /public/VJF_LetterHead_pdf.pdf
  *  2. Install pdf-lib:              npm install pdf-lib
  *  3. Import and call generate80GReceipt(donationData) after successful payment.
- *
- * USAGE (inside your DonatePage success handler):
- *
- *   import { generate80GReceipt } from "@/utils/generate80GReceipt";
- *
- *   // After verifyData.success === true:
- *   if (donorInfo.wants80G) {
- *     await generate80GReceipt({
- *       donorName:    donorInfo.name,
- *       donorAddress: donorInfo.address,
- *       donorPan:     donorInfo.panNumber,
- *       amount:       donorInfo.amount,
- *       paymentId:    response.razorpay_payment_id,
- *       receiptDate:  new Date(),
- *     });
- *   }
  */
 
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-/** Convert a number to Indian words (up to crores). */
 function amountInWords(n) {
   const ones = [
     "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
@@ -41,14 +24,12 @@ function amountInWords(n) {
     "", "", "Twenty", "Thirty", "Forty", "Fifty",
     "Sixty", "Seventy", "Eighty", "Ninety",
   ];
-
   if (n === 0) return "Zero";
 
   function twoDigits(num) {
     if (num < 20) return ones[num];
     return tens[Math.floor(num / 10)] + (num % 10 ? " " + ones[num % 10] : "");
   }
-
   function threeDigits(num) {
     if (num >= 100)
       return ones[Math.floor(num / 100)] + " Hundred" + (num % 100 ? " " + twoDigits(num % 100) : "");
@@ -69,16 +50,13 @@ function amountInWords(n) {
   return result.trim() + " Rupees Only";
 }
 
-/** Generate a sequential-looking receipt number from the payment ID. */
 function buildReceiptNumber(paymentId, date) {
-  const year  = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  // Use last 6 chars of paymentId as a unique suffix
+  const year   = date.getFullYear();
+  const month  = String(date.getMonth() + 1).padStart(2, "0");
   const suffix = paymentId ? paymentId.slice(-6).toUpperCase() : "000000";
   return `VJF/${year}-${Number(year) + 1}/${month}/${suffix}`;
 }
 
-/** Format a Date as "DD/MM/YYYY". */
 function formatDate(d) {
   return [
     String(d.getDate()).padStart(2, "0"),
@@ -89,15 +67,6 @@ function formatDate(d) {
 
 // ── Main Function ─────────────────────────────────────────────────────────────
 
-/**
- * @param {object} data
- * @param {string}  data.donorName
- * @param {string}  data.donorAddress
- * @param {string}  data.donorPan
- * @param {number}  data.amount          – in INR (integer or float)
- * @param {string}  data.paymentId       – Razorpay payment ID
- * @param {Date}    [data.receiptDate]   – defaults to now
- */
 export async function generate80GReceipt({
   donorName,
   donorAddress,
@@ -106,205 +75,216 @@ export async function generate80GReceipt({
   paymentId,
   receiptDate = new Date(),
 }) {
-  // 1. Load the letterhead PDF from /public
+  // 1. Load letterhead
   const letterheadBytes = await fetch("/VJF_LetterHead_pdf.pdf").then((r) => {
     if (!r.ok) throw new Error("Could not load VJF_LetterHead_pdf.pdf from /public");
     return r.arrayBuffer();
   });
 
-  // 2. Load into pdf-lib
-  const pdfDoc  = await PDFDocument.load(letterheadBytes);
-  const page    = pdfDoc.getPages()[0];
-  const { width, height } = page.getSize(); // typically 595 × 842 for A4
+  const pdfDoc = await PDFDocument.load(letterheadBytes);
+  const page   = pdfDoc.getPages()[0];
+  const { width, height } = page.getSize(); // 595.3 x 841.9
 
-  // 3. Embed fonts
+  // Fonts
   const bold    = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
   const regular = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-  // ── Colour palette ──
-  const darkBlue = rgb(0.16, 0.24, 0.53);   // #293C86
-  const orange   = rgb(1,    0.40, 0.12);    // #FF671F
-  const black    = rgb(0,    0,    0);
-  const grey     = rgb(0.35, 0.35, 0.35);
+  // ── Colours ──
+  const darkBlue  = rgb(0.122, 0.22, 0.392);   // matches letterhead blue
+  const orange    = rgb(1,     0.40, 0.12);     // #FF671F
+  const black     = rgb(0,     0,    0);
+  const grey      = rgb(0.4,   0.4,  0.4);
+  const lightGrey = rgb(0.92,  0.92, 0.92);
+  const green     = rgb(0,     0.42, 0.22);
+  const lightBlue = rgb(0.93,  0.95, 1.0);
+  const lightGreen= rgb(0.92,  1.0,  0.94);
 
-  // ── Y-offset helper (pdf-lib origin is bottom-left) ──
-  const y = (fromTop) => height - fromTop;
+  // ── LAYOUT CONSTANTS (pdf-lib: origin = bottom-left) ──
+  //
+  //  The letterhead has:
+  //    Header (logo + title): top 0 → 151pt from top  = y: 691 → 842 in pdf-lib
+  //    Left names column:     x: 0  → 223
+  //    Content area:          x: 228 → 583,  y: 35 → 688
+  //
+  const CX     = 231;          // content area left x
+  const CW     = 352;          // content area width  (231 → 583)
+  const CTOP   = 682;          // content area top y in pdf-lib (just below header line)
+  const CBOT   = 38;           // content area bottom y in pdf-lib
+  const LW     = 148;          // label column width inside content
+  const VX     = CX + LW + 8; // value column x
 
-  // ── Computed values ──
-  const receiptNo   = buildReceiptNumber(paymentId, receiptDate);
-  const dateStr     = formatDate(receiptDate);
-  const amtWords    = amountInWords(Math.round(amount));
+  // Computed values
+  const receiptNo    = buildReceiptNumber(paymentId, receiptDate);
+  const dateStr      = formatDate(receiptDate);
+  const amtWords     = amountInWords(Math.round(amount));
   const amtFormatted = "Rs. " + Number(amount).toLocaleString("en-IN");
 
-  // ─────────────────────────────────────────────────────────────────────────
-  //  RECEIPT TITLE
-  // ─────────────────────────────────────────────────────────────────────────
-  const titleText = "DONATION RECEIPT";
-  const titleW    = bold.widthOfTextAtSize(titleText, 15);
-  page.drawText(titleText, {
-    x: (width - titleW) / 2,
-    y: y(210),
-    size: 15,
-    font: bold,
-    color: darkBlue,
-  });
+  // ── Drawing helpers ──────────────────────────────────────────────────────
 
-  // Underline
-  page.drawLine({
-    start: { x: (width - titleW) / 2 - 4, y: y(213) },
-    end:   { x: (width + titleW) / 2 + 4, y: y(213) },
-    thickness: 1.2,
-    color: orange,
-  });
-
-  // ─────────────────────────────────────────────────────────────────────────
-  //  TRUST DETAILS BOX
-  // ─────────────────────────────────────────────────────────────────────────
-  const boxX = 50;
-  const boxW = width - 100;
-  let   curY = y(230);
-
-  page.drawRectangle({
-    x: boxX - 6,
-    y: curY - 48,
-    width: boxW + 12,
-    height: 56,
-    borderColor: darkBlue,
-    borderWidth: 0.8,
-    color: rgb(0.95, 0.96, 1),
-  });
-
-  // Row label helper
-  const drawRow = (label, value, topY, labelFont = bold, valueFont = regular, labelColor = darkBlue, valueColor = black) => {
-    page.drawText(label, { x: boxX, y: topY, size: 9, font: labelFont, color: labelColor });
-    page.drawText(value, { x: boxX + 175, y: topY, size: 9, font: valueFont, color: valueColor });
+  // Draw a filled rectangle
+  const fillRect = (x, y, w, h, color, border, borderColor) => {
+    page.drawRectangle({
+      x, y, width: w, height: h,
+      color,
+      ...(border ? { borderWidth: border, borderColor } : {}),
+    });
   };
 
-  drawRow("Trust / NGO Name       :", "Veer Jawan Foundation",               curY - 8);
-  drawRow("80G Registration No.   :", "AADTV7929EF20231",                    curY - 22);
-  drawRow("Trust Address          :", "NL-8B, Patkar Apt, LIG Bldg 58/6, 3rd Floor,", curY - 36);
-  page.drawText("Sector 10, Nerul, Navi Mumbai – 400706.", {
-    x: boxX + 175, y: curY - 47, size: 9, font: regular, color: black,
+  // Draw a horizontal divider line
+  const hLine = (y, color = lightGrey, thickness = 0.6) => {
+    page.drawLine({
+      start: { x: CX, y }, end: { x: CX + CW, y },
+      thickness, color,
+    });
+  };
+
+  // Draw label + colon + value on one row
+  const row = (label, value, y, sz = 10, valBold = false, valColor = black) => {
+    page.drawText(label, { x: CX + 4, y, size: sz, font: bold, color: darkBlue });
+    page.drawText(":", { x: CX + LW - 6, y, size: sz, font: bold, color: darkBlue });
+    page.drawText(value, { x: VX, y, size: sz, font: valBold ? bold : regular, color: valColor });
+  };
+
+  // Section header (orange bold label + underline)
+  const sectionHeader = (text, y) => {
+    page.drawText(text, { x: CX + 4, y, size: 10.5, font: bold, color: orange });
+    hLine(y - 3, orange, 0.5);
+  };
+
+  // ── START DRAWING ────────────────────────────────────────────────────────
+
+  let curY = CTOP;
+
+  // ── 1. DONATION RECEIPT TITLE ──────────────────────────────────────────
+  const titleText = "DONATION RECEIPT";
+  const titleSize = 16;
+  const titleW    = bold.widthOfTextAtSize(titleText, titleSize);
+  // Center it in the content area
+  const titleX    = CX + (CW - titleW) / 2;
+
+  page.drawText(titleText, {
+    x: titleX, y: curY - 16,
+    size: titleSize, font: bold, color: darkBlue,
+  });
+  // Underline
+  page.drawLine({
+    start: { x: titleX - 2,         y: curY - 19 },
+    end:   { x: titleX + titleW + 2, y: curY - 19 },
+    thickness: 1.5, color: orange,
   });
 
-  curY -= 70;
+  curY -= 38;
 
-  // ─────────────────────────────────────────────────────────────────────────
-  //  RECEIPT INFORMATION
-  // ─────────────────────────────────────────────────────────────────────────
-  page.drawText("RECEIPT INFORMATION", {
-    x: boxX, y: curY, size: 9.5, font: bold, color: orange,
-  });
+  // ── 2. TRUST DETAILS BOX ───────────────────────────────────────────────
+  const trustBoxH = 56;
+  fillRect(CX, curY - trustBoxH, CW, trustBoxH, lightBlue, 0.8, darkBlue);
+
+  page.drawText("Trust / NGO Name", { x: CX + 4, y: curY - 12, size: 10, font: bold, color: darkBlue });
+  page.drawText(":", { x: CX + LW - 6, y: curY - 12, size: 10, font: bold, color: darkBlue });
+  page.drawText("Veer Jawan Foundation", { x: VX, y: curY - 12, size: 10, font: bold, color: darkBlue });
+
+  page.drawText("80G Registration No.", { x: CX + 4, y: curY - 26, size: 10, font: bold, color: darkBlue });
+  page.drawText(":", { x: CX + LW - 6, y: curY - 26, size: 10, font: bold, color: darkBlue });
+  page.drawText("AADTV7929EF20231", { x: VX, y: curY - 26, size: 10, font: bold, color: darkBlue });
+
+  page.drawText("Trust Address", { x: CX + 4, y: curY - 40, size: 10, font: bold, color: darkBlue });
+  page.drawText(":", { x: CX + LW - 6, y: curY - 40, size: 10, font: bold, color: darkBlue });
+  page.drawText("NL-8B, Patkar Apt, LIG Bldg 58/6, 3rd Floor,", { x: VX, y: curY - 40, size: 9.5, font: regular, color: black });
+  page.drawText("Sector 10, Nerul, Navi Mumbai - 400706.", { x: VX, y: curY - 52, size: 9.5, font: regular, color: black });
+
+  curY -= trustBoxH + 14;
+
+  // ── 3. RECEIPT INFORMATION ─────────────────────────────────────────────
+  sectionHeader("RECEIPT INFORMATION", curY);
   curY -= 14;
 
-  page.drawLine({
-    start: { x: boxX, y: curY + 2 }, end: { x: boxX + boxW, y: curY + 2 },
-    thickness: 0.5, color: rgb(0.8, 0.8, 0.8),
-  });
+  row("Receipt Number", receiptNo, curY);
+  curY -= 16;
+  row("Receipt Date", dateStr, curY);
+  curY -= 20;
 
-  drawRow("Receipt Number :", receiptNo,  curY - 8,  bold, regular);
-  drawRow("Receipt Date   :", dateStr,    curY - 22, bold, regular);
-
-  curY -= 44;
-
-  // ─────────────────────────────────────────────────────────────────────────
-  //  DONOR DETAILS
-  // ─────────────────────────────────────────────────────────────────────────
-  page.drawText("DONOR DETAILS", {
-    x: boxX, y: curY, size: 9.5, font: bold, color: orange,
-  });
+  hLine(curY, lightGrey);
   curY -= 14;
 
-  page.drawLine({
-    start: { x: boxX, y: curY + 2 }, end: { x: boxX + boxW, y: curY + 2 },
-    thickness: 0.5, color: rgb(0.8, 0.8, 0.8),
-  });
+  // ── 4. DONOR DETAILS ───────────────────────────────────────────────────
+  sectionHeader("DONOR DETAILS", curY);
+  curY -= 14;
 
-  drawRow("Donor Name    :", donorName,  curY - 8,  bold, regular);
-  drawRow("PAN Number    :", donorPan,   curY - 22, bold, bold, darkBlue, darkBlue);
+  row("Donor Name", donorName, curY);
+  curY -= 16;
+  row("PAN Number", donorPan, curY, 10, true, darkBlue);
+  curY -= 16;
 
-  // Address may be multi-line — wrap at ~55 chars
+  // Address — wrap at ~45 chars to fit the value column (max width ~200pt)
   const addrWords = donorAddress.split(" ");
-  let   addrLine1 = "";
-  let   addrLine2 = "";
+  let addrLine1 = "", addrLine2 = "", addrLine3 = "";
   for (const word of addrWords) {
-    if ((addrLine1 + " " + word).trim().length <= 55) addrLine1 = (addrLine1 + " " + word).trim();
-    else addrLine2 = (addrLine2 + " " + word).trim();
+    const candidate = (addrLine1 + " " + word).trim();
+    if (candidate.length <= 42) { addrLine1 = candidate; continue; }
+    const candidate2 = (addrLine2 + " " + word).trim();
+    if (candidate2.length <= 42) { addrLine2 = candidate2; continue; }
+    addrLine3 = (addrLine3 + " " + word).trim();
   }
 
-  page.drawText("Donor Address :", { x: boxX,       y: curY - 36, size: 9, font: bold,    color: darkBlue });
-  page.drawText(addrLine1,         { x: boxX + 175, y: curY - 36, size: 9, font: regular, color: black });
-  if (addrLine2) {
-    page.drawText(addrLine2, { x: boxX + 175, y: curY - 48, size: 9, font: regular, color: black });
-  }
+  page.drawText("Donor Address", { x: CX + 4, y: curY, size: 10, font: bold, color: darkBlue });
+  page.drawText(":", { x: CX + LW - 6, y: curY, size: 10, font: bold, color: darkBlue });
+  page.drawText(addrLine1, { x: VX, y: curY, size: 10, font: regular, color: black });
+  if (addrLine2) { curY -= 13; page.drawText(addrLine2, { x: VX, y: curY, size: 10, font: regular, color: black }); }
+  if (addrLine3) { curY -= 13; page.drawText(addrLine3, { x: VX, y: curY, size: 10, font: regular, color: black }); }
 
-  curY -= (addrLine2 ? 70 : 58);
-
-  // ─────────────────────────────────────────────────────────────────────────
-  //  DONATION DETAILS
-  // ─────────────────────────────────────────────────────────────────────────
-  page.drawText("DONATION DETAILS", {
-    x: boxX, y: curY, size: 9.5, font: bold, color: orange,
-  });
+  curY -= 20;
+  hLine(curY, lightGrey);
   curY -= 14;
 
+  // ── 5. DONATION DETAILS ────────────────────────────────────────────────
+  sectionHeader("DONATION DETAILS", curY);
+  curY -= 14;
+
+  row("Amount Received", amtFormatted, curY, 10, true, green);
+  curY -= 16;
+  row("Amount in Words", amtWords, curY, 9.5);
+  curY -= 16;
+  row("Mode of Payment", "Online (Razorpay)", curY);
+  curY -= 16;
+  row("Date of Transaction", dateStr, curY);
+  curY -= 16;
+  row("Transaction ID", paymentId || "N/A", curY, 9.5, false, grey);
+  curY -= 20;
+
+  // ── 6. 80G NOTE BOX ────────────────────────────────────────────────────
+  hLine(curY, lightGrey);
+  curY -= 8;
+
+  const noteText = "This donation is eligible for tax deduction under Section 80G of the Income Tax Act, 1961.";
+  fillRect(CX, curY - 20, CW, 24, lightGreen, 0.6, green);
+  page.drawText(noteText, { x: CX + 6, y: curY - 14, size: 8.5, font: regular, color: green });
+
+  curY -= 34;
+
+  // ── 7. SIGNATURE BLOCK ─────────────────────────────────────────────────
+  const sigLineX = CX + CW - 155;
   page.drawLine({
-    start: { x: boxX, y: curY + 2 }, end: { x: boxX + boxW, y: curY + 2 },
-    thickness: 0.5, color: rgb(0.8, 0.8, 0.8),
-  });
-
-  drawRow("Amount Received    :", amtFormatted,        curY - 8,  bold, bold, darkBlue, rgb(0, 0.45, 0.15));
-  drawRow("Amount in Words    :", amtWords,            curY - 22, bold, regular);
-  drawRow("Mode of Payment    :", "Online (Razorpay)", curY - 36, bold, regular);
-  drawRow("Date of Transaction:", dateStr,             curY - 50, bold, regular);
-  drawRow("Transaction ID     :", paymentId || "N/A",  curY - 64, bold, regular, darkBlue, grey);
-
-  curY -= 90;
-
-  // ─────────────────────────────────────────────────────────────────────────
-  //  80G NOTE
-  // ─────────────────────────────────────────────────────────────────────────
-  const noteText =
-    "This donation is eligible for tax deduction under Section 80G of the Income Tax Act, 1961.";
-  page.drawRectangle({
-    x: boxX - 6, y: curY - 16, width: boxW + 12, height: 26,
-    color: rgb(0.95, 1, 0.95), borderColor: rgb(0, 0.55, 0.2), borderWidth: 0.6,
-  });
-  page.drawText(noteText, {
-    x: boxX, y: curY - 8, size: 8, font: regular, color: rgb(0, 0.45, 0.15),
-  });
-
-  curY -= 40;
-
-  // ─────────────────────────────────────────────────────────────────────────
-  //  SIGNATURE BLOCK
-  // ─────────────────────────────────────────────────────────────────────────
-  const sigX = width - 200;
-  page.drawLine({
-    start: { x: sigX, y: curY - 4 }, end: { x: sigX + 140, y: curY - 4 },
+    start: { x: sigLineX, y: curY - 2 },
+    end:   { x: sigLineX + 145, y: curY - 2 },
     thickness: 0.8, color: darkBlue,
   });
   page.drawText("Authorised Signatory", {
-    x: sigX + 10, y: curY - 16, size: 8.5, font: bold, color: darkBlue,
+    x: sigLineX + 8, y: curY - 14, size: 9, font: bold, color: darkBlue,
   });
   page.drawText("Veer Jawan Foundation", {
-    x: sigX + 5, y: curY - 28, size: 8, font: regular, color: grey,
+    x: sigLineX + 8, y: curY - 26, size: 8.5, font: regular, color: grey,
   });
 
-  // ─────────────────────────────────────────────────────────────────────────
-  //  FOOTER NOTE
-  // ─────────────────────────────────────────────────────────────────────────
-  page.drawLine({
-    start: { x: 40, y: 60 }, end: { x: width - 40, y: 60 },
-    thickness: 0.5, color: rgb(0.8, 0.8, 0.8),
-  });
-  const footNote = "This is a computer-generated receipt and does not require a physical signature.";
+  // ── 8. FOOTER ──────────────────────────────────────────────────────────
+  const footNote = "This is a system-generated receipt and does not require a physical signature.";
   const footW = regular.widthOfTextAtSize(footNote, 7.5);
+  hLine(CBOT + 16, lightGrey, 0.4);
   page.drawText(footNote, {
-    x: (width - footW) / 2, y: 48, size: 7.5, font: regular, color: grey,
+    x: CX + (CW - footW) / 2, y: CBOT + 4,
+    size: 7.5, font: regular, color: grey,
   });
 
-  // 4. Serialize & trigger download
+  // ── Save & download ───────────────────────────────────────────────────
   const pdfBytes = await pdfDoc.save();
   const blob = new Blob([pdfBytes], { type: "application/pdf" });
   const url  = URL.createObjectURL(blob);
