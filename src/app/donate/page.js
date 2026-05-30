@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Topnav } from "@/components/Topnav";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { generate80GReceipt } from "@/utils/generate80GReceipt";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -158,6 +159,8 @@ export default function DonatePage() {
   const [loading, setLoading] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [donationDetails, setDonationDetails] = useState(null);
+  // ── NEW: tracks whether receipt download is in progress ──
+  const [receiptLoading, setReceiptLoading] = useState(false);
 
   const finalAmount = isOther ? Number(formData.customAmount) : formData.selectedAmount;
 
@@ -211,6 +214,26 @@ export default function DonatePage() {
     }
 
     return newErrors;
+  };
+
+  // ── NEW: reusable receipt download handler ────────────────────────────────
+  const handleDownloadReceipt = async (details) => {
+    setReceiptLoading(true);
+    try {
+      await generate80GReceipt({
+        donorName:    details.name,
+        donorAddress: details.address,
+        donorPan:     details.panNumber,
+        amount:       details.amount,
+        paymentId:    details.paymentId,
+        receiptDate:  new Date(),
+      });
+    } catch (err) {
+      console.error("Receipt generation failed:", err);
+      alert("Could not generate receipt. Please try again.");
+    } finally {
+      setReceiptLoading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -288,13 +311,37 @@ export default function DonatePage() {
               }),
             });
             const verifyData = await verifyRes.json();
+
             if (verifyData.success) {
-              setDonationDetails({
-                name: formData.name,
-                email: formData.email,
-                amount: finalAmount,
+              // ── Build the full details object first ──
+              const details = {
+                name:      orderData.donorInfo.name,
+                email:     orderData.donorInfo.email,
+                amount:    orderData.donorInfo.amount,
                 paymentId: response.razorpay_payment_id,
-              });
+                wants80G:  orderData.donorInfo.wants80G,
+                panNumber: orderData.donorInfo.panNumber,
+                address:   orderData.donorInfo.address,
+              };
+
+              // ── Auto-download 80G receipt if donor opted in ──
+              if (orderData.donorInfo.wants80G) {
+                try {
+                  await generate80GReceipt({
+                    donorName:    details.name,
+                    donorAddress: details.address,
+                    donorPan:     details.panNumber,
+                    amount:       details.amount,
+                    paymentId:    details.paymentId,
+                    receiptDate:  new Date(),
+                  });
+                } catch (err) {
+                  // Don't block success screen if PDF fails
+                  console.error("Auto receipt generation failed:", err);
+                }
+              }
+
+              setDonationDetails(details);
               setPaymentStatus("success");
             } else {
               setPaymentStatus("failed");
@@ -325,6 +372,7 @@ export default function DonatePage() {
     return (
       <div className="min-h-screen bg-[#f5f0e8] flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow-xl px-8 py-12 max-w-md w-full text-center">
+          {/* Green check icon */}
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg
               className="w-10 h-10 text-green-600"
@@ -336,6 +384,7 @@ export default function DonatePage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
+
           <h2 className="text-2xl font-bold text-[#293C86] mb-2">
             Thank You, {donationDetails.name}!
           </h2>
@@ -354,6 +403,38 @@ export default function DonatePage() {
             A confirmation will be sent to{" "}
             <span className="font-medium text-gray-500">{donationDetails.email}</span>.
           </p>
+
+          {/* ── 80G Receipt Download Button (only if donor opted in) ── */}
+          {donationDetails.wants80G && (
+            <div className="mb-4">
+              <p className="text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2 mb-3">
+                ✅ Your 80G receipt has been downloaded automatically. Use the button below if you need it again.
+              </p>
+              <button
+                onClick={() => handleDownloadReceipt(donationDetails)}
+                disabled={receiptLoading}
+                className="w-full flex items-center justify-center gap-2 bg-[#046A38] hover:bg-green-800 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-sm tracking-wider uppercase px-8 py-3 rounded-lg transition-colors duration-200 mb-3"
+              >
+                {receiptLoading ? (
+                  <>
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                    </svg>
+                    Download 80G Receipt
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+
           <Link
             href="/"
             className="inline-block bg-[#293C86] text-white font-bold text-sm tracking-wider uppercase px-8 py-3 rounded-lg hover:bg-[#2B4DD0] transition-colors duration-200"
