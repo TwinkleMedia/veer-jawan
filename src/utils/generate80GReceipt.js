@@ -106,7 +106,7 @@ export async function generate80GReceipt({
   //    Left names column:     x: 0  → 223
   //    Content area:          x: 228 → 583,  y: 35 → 688
   //
-  const CX     = 231;          // content area left x
+  const CX     = 215;          // content area left x
   const CW     = 352;          // content area width  (231 → 583)
   const CTOP   = 682;          // content area top y in pdf-lib (just below header line)
   const CBOT   = 38;           // content area bottom y in pdf-lib
