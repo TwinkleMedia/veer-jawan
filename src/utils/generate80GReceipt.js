@@ -261,20 +261,7 @@ export async function generate80GReceipt({
 
   curY -= 34;
 
-  // ── 7. SIGNATURE BLOCK ─────────────────────────────────────────────────
-  const sigLineX = CX + CW - 155;
-  page.drawLine({
-    start: { x: sigLineX, y: curY - 2 },
-    end:   { x: sigLineX + 145, y: curY - 2 },
-    thickness: 0.8, color: darkBlue,
-  });
-  page.drawText("Authorised Signatory", {
-    x: sigLineX + 8, y: curY - 14, size: 9, font: bold, color: darkBlue,
-  });
-  page.drawText("Veer Jawan Foundation", {
-    x: sigLineX + 8, y: curY - 26, size: 8.5, font: regular, color: grey,
-  });
-
+  
   // ── 8. FOOTER ──────────────────────────────────────────────────────────
   const footNote = "This is a system-generated receipt and does not require a physical signature.";
   const footW = regular.widthOfTextAtSize(footNote, 7.5);
