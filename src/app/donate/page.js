@@ -29,10 +29,9 @@ function GallerySidebar() {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const res  = await fetch(`${API_URL}/api/gallery`, { credentials: "include" });
+        const res = await fetch(`${API_URL}/api/gallery`, { credentials: "include" });
         const json = await res.json();
         if (json.success) {
-          // Pull all images from all galleries, limit to 8
           const allImages = json.galleries
             .flatMap((g) => g.media.filter((m) => m.type === "image"))
             .slice(0, 8);
@@ -47,7 +46,6 @@ function GallerySidebar() {
     fetchImages();
   }, []);
 
-  // Auto-rotate every 3 seconds
   useEffect(() => {
     if (images.length < 2) return;
     const timer = setInterval(() => {
@@ -85,11 +83,7 @@ function GallerySidebar() {
             }`}
           />
         ))}
-
-        {/* Overlay gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#293C86]/60 to-transparent" />
-
-        {/* Dot indicators */}
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
           {images.map((_, i) => (
             <button
@@ -101,9 +95,6 @@ function GallerySidebar() {
             />
           ))}
         </div>
-
-        {/* Label */}
-        
       </div>
 
       {/* Thumbnail strip */}
@@ -113,7 +104,9 @@ function GallerySidebar() {
             key={i}
             onClick={() => setCurrent(i)}
             className={`aspect-square rounded-xl overflow-hidden border-2 transition-all duration-200 ${
-              i === current ? "border-[#FF671F] scale-95" : "border-transparent hover:border-gray-300"
+              i === current
+                ? "border-[#FF671F] scale-95"
+                : "border-transparent hover:border-gray-300"
             }`}
           >
             <img src={img.url} alt={img.fileName} className="w-full h-full object-cover" />
@@ -131,6 +124,23 @@ function GallerySidebar() {
   );
 }
 
+// ── Error Message ─────────────────────────────────────────────────────────────
+function ErrorMsg({ msg }) {
+  return (
+    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+      <svg className="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          fillRule="evenodd"
+          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+          clipRule="evenodd"
+        />
+      </svg>
+      {msg}
+    </p>
+  );
+}
+
+// ── Main Page ─────────────────────────────────────────────────────────────────
 export default function DonatePage() {
   const [formData, setFormData] = useState({
     name: "",
@@ -138,6 +148,9 @@ export default function DonatePage() {
     contact: "",
     selectedAmount: null,
     customAmount: "",
+    wants80G: null,
+    panNumber: "",
+    address: "",
   });
 
   const [isOther, setIsOther] = useState(false);
@@ -146,9 +159,7 @@ export default function DonatePage() {
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [donationDetails, setDonationDetails] = useState(null);
 
-  const finalAmount = isOther
-    ? Number(formData.customAmount)
-    : formData.selectedAmount;
+  const finalAmount = isOther ? Number(formData.customAmount) : formData.selectedAmount;
 
   const handleAmountSelect = (amount) => {
     setIsOther(false);
@@ -163,22 +174,42 @@ export default function DonatePage() {
 
   const validate = () => {
     const newErrors = {};
+
     if (!formData.name.trim()) newErrors.name = "Name is required.";
+
     if (!formData.email.trim()) {
       newErrors.email = "Email is required.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Enter a valid email address.";
     }
+
     if (!formData.contact.trim()) {
       newErrors.contact = "Contact number is required.";
     } else if (!/^[6-9]\d{9}$/.test(formData.contact)) {
       newErrors.contact = "Enter a valid 10-digit Indian mobile number.";
     }
+
     if (!finalAmount || isNaN(finalAmount)) {
       newErrors.amount = "Please select or enter a donation amount.";
     } else if (finalAmount < 1) {
       newErrors.amount = "Amount must be at least ₹1.";
     }
+
+    if (formData.wants80G === null) {
+      newErrors.wants80G = "Please select an option for 80G receipt.";
+    }
+
+    if (formData.wants80G === "yes") {
+      if (!formData.panNumber.trim()) {
+        newErrors.panNumber = "PAN number is required for 80G receipt.";
+      } else if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(formData.panNumber.trim().toUpperCase())) {
+        newErrors.panNumber = "Enter a valid PAN number (e.g. ABCDE1234F).";
+      }
+      if (!formData.address.trim()) {
+        newErrors.address = "Address is required for 80G receipt.";
+      }
+    }
+
     return newErrors;
   };
 
@@ -201,6 +232,9 @@ export default function DonatePage() {
           email: formData.email,
           contact: formData.contact,
           amount: finalAmount,
+          wants80G: formData.wants80G === "yes",
+          panNumber: formData.wants80G === "yes" ? formData.panNumber.toUpperCase() : null,
+          address: formData.wants80G === "yes" ? formData.address : null,
         }),
       });
 
@@ -274,7 +308,10 @@ export default function DonatePage() {
       };
 
       const rzp = new window.Razorpay(options);
-      rzp.on("payment.failed", () => { setPaymentStatus("failed"); setLoading(false); });
+      rzp.on("payment.failed", () => {
+        setPaymentStatus("failed");
+        setLoading(false);
+      });
       rzp.open();
     } catch (err) {
       console.error(err);
@@ -289,17 +326,38 @@ export default function DonatePage() {
       <div className="min-h-screen bg-[#f5f0e8] flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow-xl px-8 py-12 max-w-md w-full text-center">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+            <svg
+              className="w-10 h-10 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              viewBox="0 0 24 24"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-[#293C86] mb-2">Thank You, {donationDetails.name}!</h2>
+          <h2 className="text-2xl font-bold text-[#293C86] mb-2">
+            Thank You, {donationDetails.name}!
+          </h2>
           <p className="text-gray-500 mb-1 text-sm">
-            Your donation of <span className="font-bold text-[#FF671F]">₹{donationDetails.amount.toLocaleString("en-IN")}</span> was successful.
+            Your donation of{" "}
+            <span className="font-bold text-[#FF671F]">
+              ₹{donationDetails.amount.toLocaleString("en-IN")}
+            </span>{" "}
+            was successful.
           </p>
-          <p className="text-gray-400 text-xs mb-2">Payment ID: <span className="font-mono text-gray-500">{donationDetails.paymentId}</span></p>
-          <p className="text-gray-400 text-xs mb-8">A confirmation will be sent to <span className="font-medium text-gray-500">{donationDetails.email}</span>.</p>
-          <Link href="/" className="inline-block bg-[#293C86] text-white font-bold text-sm tracking-wider uppercase px-8 py-3 rounded-lg hover:bg-[#2B4DD0] transition-colors duration-200">
+          <p className="text-gray-400 text-xs mb-2">
+            Payment ID:{" "}
+            <span className="font-mono text-gray-500">{donationDetails.paymentId}</span>
+          </p>
+          <p className="text-gray-400 text-xs mb-8">
+            A confirmation will be sent to{" "}
+            <span className="font-medium text-gray-500">{donationDetails.email}</span>.
+          </p>
+          <Link
+            href="/"
+            className="inline-block bg-[#293C86] text-white font-bold text-sm tracking-wider uppercase px-8 py-3 rounded-lg hover:bg-[#2B4DD0] transition-colors duration-200"
+          >
             Back to Home
           </Link>
         </div>
@@ -313,13 +371,24 @@ export default function DonatePage() {
       <div className="min-h-screen bg-[#f5f0e8] flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow-xl px-8 py-12 max-w-md w-full text-center">
           <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+            <svg
+              className="w-10 h-10 text-red-500"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              viewBox="0 0 24 24"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-red-600 mb-2">Payment Failed</h2>
-          <p className="text-gray-500 text-sm mb-8">Something went wrong during the payment. Please try again.</p>
-          <button onClick={() => setPaymentStatus(null)} className="inline-block bg-[#FF671F] hover:bg-[#e85510] text-white font-bold text-sm tracking-wider uppercase px-8 py-3 rounded-lg transition-colors duration-200">
+          <p className="text-gray-500 text-sm mb-8">
+            Something went wrong during the payment. Please try again.
+          </p>
+          <button
+            onClick={() => setPaymentStatus(null)}
+            className="inline-block bg-[#FF671F] hover:bg-[#e85510] text-white font-bold text-sm tracking-wider uppercase px-8 py-3 rounded-lg transition-colors duration-200"
+          >
             Try Again
           </button>
         </div>
@@ -339,14 +408,15 @@ export default function DonatePage() {
           <div className="max-w-2xl mx-auto">
             <div className="flex justify-center mb-4">
               <svg className="w-10 h-10 text-[#FF671F]" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+                <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z" />
               </svg>
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-wide mb-3">
               Support Our <span className="text-[#FF671F]">Veer Nari & Veer Jawan</span>
             </h1>
             <p className="text-blue-200 text-sm md:text-base max-w-lg mx-auto leading-relaxed">
-              Your generosity helps us honour the sacrifices of our brave soldiers and support their families. Every rupee counts.
+              Your generosity helps us honour the sacrifices of our brave soldiers and support
+              their families. Every rupee counts.
             </p>
           </div>
         </div>
@@ -373,7 +443,9 @@ export default function DonatePage() {
 
                 {/* Card Header */}
                 <div className="bg-gradient-to-r from-[#293C86] to-[#2B4DD0] px-8 py-5">
-                  <h2 className="text-lg font-bold text-white tracking-wide uppercase">Donation Form</h2>
+                  <h2 className="text-lg font-bold text-white tracking-wide uppercase">
+                    Donation Form
+                  </h2>
                   <p className="text-blue-200 text-xs mt-0.5">All fields are required</p>
                 </div>
 
@@ -381,42 +453,72 @@ export default function DonatePage() {
 
                   {/* Full Name */}
                   <div>
-                    <label className="block text-xs font-bold text-[#293C86] uppercase tracking-widest mb-2">Full Name</label>
+                    <label className="block text-xs font-bold text-[#293C86] uppercase tracking-widest mb-2">
+                      Full Name
+                    </label>
                     <input
                       type="text"
                       placeholder="Enter your full name"
                       value={formData.name}
-                      onChange={(e) => { setFormData((p) => ({ ...p, name: e.target.value })); setErrors((p) => ({ ...p, name: "" })); }}
-                      className={`w-full border rounded-lg px-4 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-[#293C86] focus:border-[#293C86] ${errors.name ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}
+                      onChange={(e) => {
+                        setFormData((p) => ({ ...p, name: e.target.value }));
+                        setErrors((p) => ({ ...p, name: "" }));
+                      }}
+                      className={`w-full border rounded-lg px-4 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-[#293C86] focus:border-[#293C86] ${
+                        errors.name
+                          ? "border-red-400 bg-red-50"
+                          : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                      }`}
                     />
                     {errors.name && <ErrorMsg msg={errors.name} />}
                   </div>
 
                   {/* Email */}
                   <div>
-                    <label className="block text-xs font-bold text-[#293C86] uppercase tracking-widest mb-2">Email Address</label>
+                    <label className="block text-xs font-bold text-[#293C86] uppercase tracking-widest mb-2">
+                      Email Address
+                    </label>
                     <input
                       type="email"
                       placeholder="you@example.com"
                       value={formData.email}
-                      onChange={(e) => { setFormData((p) => ({ ...p, email: e.target.value })); setErrors((p) => ({ ...p, email: "" })); }}
-                      className={`w-full border rounded-lg px-4 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-[#293C86] focus:border-[#293C86] ${errors.email ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}
+                      onChange={(e) => {
+                        setFormData((p) => ({ ...p, email: e.target.value }));
+                        setErrors((p) => ({ ...p, email: "" }));
+                      }}
+                      className={`w-full border rounded-lg px-4 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-[#293C86] focus:border-[#293C86] ${
+                        errors.email
+                          ? "border-red-400 bg-red-50"
+                          : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                      }`}
                     />
                     {errors.email && <ErrorMsg msg={errors.email} />}
                   </div>
 
                   {/* Contact */}
                   <div>
-                    <label className="block text-xs font-bold text-[#293C86] uppercase tracking-widest mb-2">Contact Number</label>
+                    <label className="block text-xs font-bold text-[#293C86] uppercase tracking-widest mb-2">
+                      Contact Number
+                    </label>
                     <div className="flex gap-2">
-                      <span className="flex items-center px-3 py-3 bg-gray-100 border border-gray-200 rounded-lg text-sm text-gray-500 font-medium select-none">+91</span>
+                      <span className="flex items-center px-3 py-3 bg-gray-100 border border-gray-200 rounded-lg text-sm text-gray-500 font-medium select-none">
+                        +91
+                      </span>
                       <input
                         type="tel"
                         placeholder="10-digit mobile number"
                         maxLength={10}
                         value={formData.contact}
-                        onChange={(e) => { const val = e.target.value.replace(/\D/g, ""); setFormData((p) => ({ ...p, contact: val })); setErrors((p) => ({ ...p, contact: "" })); }}
-                        className={`flex-1 border rounded-lg px-4 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-[#293C86] focus:border-[#293C86] ${errors.contact ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, "");
+                          setFormData((p) => ({ ...p, contact: val }));
+                          setErrors((p) => ({ ...p, contact: "" }));
+                        }}
+                        className={`flex-1 border rounded-lg px-4 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-[#293C86] focus:border-[#293C86] ${
+                          errors.contact
+                            ? "border-red-400 bg-red-50"
+                            : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                        }`}
                       />
                     </div>
                     {errors.contact && <ErrorMsg msg={errors.contact} />}
@@ -424,7 +526,9 @@ export default function DonatePage() {
 
                   {/* Donation Amount */}
                   <div>
-                    <label className="block text-xs font-bold text-[#293C86] uppercase tracking-widest mb-3">Select Donation Amount</label>
+                    <label className="block text-xs font-bold text-[#293C86] uppercase tracking-widest mb-3">
+                      Select Donation Amount
+                    </label>
                     <div className="grid grid-cols-2 gap-3 mb-3">
                       {PRESET_AMOUNTS.map((amount) => (
                         <label
@@ -436,10 +540,24 @@ export default function DonatePage() {
                               : "border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100"
                           }`}
                         >
-                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${formData.selectedAmount === amount && !isOther ? "border-[#FF671F]" : "border-gray-400"}`}>
-                            {formData.selectedAmount === amount && !isOther && <div className="w-2 h-2 rounded-full bg-[#FF671F]" />}
+                          <div
+                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                              formData.selectedAmount === amount && !isOther
+                                ? "border-[#FF671F]"
+                                : "border-gray-400"
+                            }`}
+                          >
+                            {formData.selectedAmount === amount && !isOther && (
+                              <div className="w-2 h-2 rounded-full bg-[#FF671F]" />
+                            )}
                           </div>
-                          <span className={`text-sm font-bold transition-colors ${formData.selectedAmount === amount && !isOther ? "text-[#FF671F]" : "text-gray-700"}`}>
+                          <span
+                            className={`text-sm font-bold transition-colors ${
+                              formData.selectedAmount === amount && !isOther
+                                ? "text-[#FF671F]"
+                                : "text-gray-700"
+                            }`}
+                          >
                             ₹{amount.toLocaleString("en-IN")}
                           </span>
                         </label>
@@ -448,24 +566,39 @@ export default function DonatePage() {
 
                     <label
                       onClick={handleOtherSelect}
-                      className={`flex items-center gap-3 px-4 py-3.5 rounded-xl border-2 cursor-pointer transition-all duration-200 select-none mb-3 ${isOther ? "border-[#FF671F] bg-orange-50" : "border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100"}`}
+                      className={`flex items-center gap-3 px-4 py-3.5 rounded-xl border-2 cursor-pointer transition-all duration-200 select-none mb-3 ${
+                        isOther
+                          ? "border-[#FF671F] bg-orange-50"
+                          : "border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100"
+                      }`}
                     >
-                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isOther ? "border-[#FF671F]" : "border-gray-400"}`}>
+                      <div
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                          isOther ? "border-[#FF671F]" : "border-gray-400"
+                        }`}
+                      >
                         {isOther && <div className="w-2 h-2 rounded-full bg-[#FF671F]" />}
                       </div>
-                      <span className={`text-sm font-bold ${isOther ? "text-[#FF671F]" : "text-gray-700"}`}>Other Amount</span>
+                      <span className={`text-sm font-bold ${isOther ? "text-[#FF671F]" : "text-gray-700"}`}>
+                        Other Amount
+                      </span>
                     </label>
 
                     {isOther && (
                       <div className="mt-2">
                         <div className="flex items-center border-2 border-[#FF671F] rounded-xl overflow-hidden bg-orange-50 focus-within:ring-2 focus-within:ring-[#FF671F]/30 transition-all">
-                          <span className="px-4 py-3 text-sm font-bold text-[#FF671F] border-r border-orange-200 bg-orange-100 select-none">₹</span>
+                          <span className="px-4 py-3 text-sm font-bold text-[#FF671F] border-r border-orange-200 bg-orange-100 select-none">
+                            ₹
+                          </span>
                           <input
                             type="number"
                             placeholder="Enter your amount"
                             min={1}
                             value={formData.customAmount}
-                            onChange={(e) => { setFormData((p) => ({ ...p, customAmount: e.target.value })); setErrors((p) => ({ ...p, amount: "" })); }}
+                            onChange={(e) => {
+                              setFormData((p) => ({ ...p, customAmount: e.target.value }));
+                              setErrors((p) => ({ ...p, amount: "" }));
+                            }}
                             className="flex-1 px-4 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none bg-transparent"
                             autoFocus
                           />
@@ -475,18 +608,151 @@ export default function DonatePage() {
                     {errors.amount && <ErrorMsg msg={errors.amount} />}
                   </div>
 
+                  {/* ── 80G Receipt ─────────────────────────────────────────── */}
+                  <div>
+                    <label className="block text-xs font-bold text-[#293C86] uppercase tracking-widest mb-1">
+                      Do you want an 80G Donation Receipt?
+                    </label>
+                    <p className="text-xs text-gray-400 mb-3">
+                      Section 80G allows you to claim a tax deduction on your donation.
+                    </p>
+
+                    <div className="flex gap-3">
+                      {["yes", "no"].map((val) => (
+                        <label
+                          key={val}
+                          onClick={() => {
+                            setFormData((p) => ({
+                              ...p,
+                              wants80G: val,
+                              panNumber: "",
+                              address: "",
+                            }));
+                            setErrors((p) => ({
+                              ...p,
+                              wants80G: "",
+                              panNumber: "",
+                              address: "",
+                            }));
+                          }}
+                          className={`flex items-center gap-2.5 px-5 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200 select-none flex-1 ${
+                            formData.wants80G === val
+                              ? "border-[#FF671F] bg-orange-50"
+                              : "border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100"
+                          }`}
+                        >
+                          <div
+                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                              formData.wants80G === val ? "border-[#FF671F]" : "border-gray-400"
+                            }`}
+                          >
+                            {formData.wants80G === val && (
+                              <div className="w-2 h-2 rounded-full bg-[#FF671F]" />
+                            )}
+                          </div>
+                          <span
+                            className={`text-sm font-bold ${
+                              formData.wants80G === val ? "text-[#FF671F]" : "text-gray-700"
+                            }`}
+                          >
+                            {val === "yes" ? "Yes" : "No"}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                    {errors.wants80G && <ErrorMsg msg={errors.wants80G} />}
+
+                    {/* PAN + Address — shown only when Yes */}
+                    {formData.wants80G === "yes" && (
+                      <div className="mt-4 space-y-4 bg-orange-50 border border-orange-100 rounded-xl p-4">
+                        {/* Info note */}
+                        <div className="flex items-start gap-2 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2.5">
+                          <svg
+                            className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <p className="text-xs text-blue-700 leading-relaxed">
+                            Your PAN and address are required to issue a valid 80G tax exemption
+                            certificate as per Income Tax regulations.
+                          </p>
+                        </div>
+
+                        {/* PAN Number */}
+                        <div>
+                          <label className="block text-xs font-bold text-[#293C86] uppercase tracking-widest mb-2">
+                            PAN Number
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. ABCDE1234F"
+                            maxLength={10}
+                            value={formData.panNumber}
+                            onChange={(e) => {
+                              setFormData((p) => ({
+                                ...p,
+                                panNumber: e.target.value.toUpperCase(),
+                              }));
+                              setErrors((p) => ({ ...p, panNumber: "" }));
+                            }}
+                            className={`w-full border rounded-lg px-4 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-[#293C86] focus:border-[#293C86] font-mono tracking-widest ${
+                              errors.panNumber
+                                ? "border-red-400 bg-red-50"
+                                : "border-gray-200 bg-white hover:border-gray-300"
+                            }`}
+                          />
+                          {errors.panNumber && <ErrorMsg msg={errors.panNumber} />}
+                        </div>
+
+                        {/* Donor Address */}
+                        <div>
+                          <label className="block text-xs font-bold text-[#293C86] uppercase tracking-widest mb-2">
+                            Donor's Address
+                          </label>
+                          <textarea
+                            rows={3}
+                            placeholder="House/Flat No., Street, City, State, PIN Code"
+                            value={formData.address}
+                            onChange={(e) => {
+                              setFormData((p) => ({ ...p, address: e.target.value }));
+                              setErrors((p) => ({ ...p, address: "" }));
+                            }}
+                            className={`w-full border rounded-lg px-4 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-[#293C86] focus:border-[#293C86] resize-none ${
+                              errors.address
+                                ? "border-red-400 bg-red-50"
+                                : "border-gray-200 bg-white hover:border-gray-300"
+                            }`}
+                          />
+                          {errors.address && <ErrorMsg msg={errors.address} />}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Amount Summary */}
                   {finalAmount && finalAmount > 0 && (
                     <div className="bg-blue-50 border border-blue-100 rounded-xl px-5 py-4 flex items-center justify-between">
                       <span className="text-sm text-blue-700 font-medium">Donation amount</span>
-                      <span className="text-lg font-extrabold text-[#293C86]">₹{Number(finalAmount).toLocaleString("en-IN")}</span>
+                      <span className="text-lg font-extrabold text-[#293C86]">
+                        ₹{Number(finalAmount).toLocaleString("en-IN")}
+                      </span>
                     </div>
                   )}
 
                   {errors.submit && (
                     <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
                       <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
+                        <path
+                          fillRule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                       {errors.submit}
                     </div>
@@ -500,27 +766,43 @@ export default function DonatePage() {
                     {loading ? (
                       <>
                         <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v8z"
+                          />
                         </svg>
                         Processing...
                       </>
                     ) : (
                       <>
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+                          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z" />
                         </svg>
                         Proceed to Pay
                       </>
                     )}
                   </button>
 
-                  <p className="text-center text-xs text-gray-400">Secured by Razorpay · All transactions are encrypted</p>
+                  <p className="text-center text-xs text-gray-400">
+                    Secured by Razorpay · All transactions are encrypted
+                  </p>
                 </form>
               </div>
 
               <div className="text-center mt-6">
-                <Link href="/" className="text-xs text-[#293C86] hover:text-[#FF671F] font-bold uppercase tracking-widest transition-colors">
+                <Link
+                  href="/"
+                  className="text-xs text-[#293C86] hover:text-[#FF671F] font-bold uppercase tracking-widest transition-colors"
+                >
                   ← Back to Home
                 </Link>
               </div>
@@ -530,16 +812,5 @@ export default function DonatePage() {
       </div>
       <Footer />
     </>
-  );
-}
-
-function ErrorMsg({ msg }) {
-  return (
-    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-      <svg className="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
-      </svg>
-      {msg}
-    </p>
   );
 }
