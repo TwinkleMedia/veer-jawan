@@ -5,7 +5,7 @@
  * Uses pdf-lib (browser-compatible). No Python or server required.
  *
  * SETUP:
- *  1. Place the letterhead PDF at:  /public/VJF_LetterHead.pdf
+ *  1. Place the letterhead PDF at:  /public/VJF_LetterHead_pdf.pdf
  *  2. Install pdf-lib:              npm install pdf-lib
  *  3. Import and call generate80GReceipt(donationData) after successful payment.
  *
@@ -107,8 +107,8 @@ export async function generate80GReceipt({
   receiptDate = new Date(),
 }) {
   // 1. Load the letterhead PDF from /public
-  const letterheadBytes = await fetch("/VJF_LetterHead.pdf").then((r) => {
-    if (!r.ok) throw new Error("Could not load VJF_LetterHead.pdf from /public");
+  const letterheadBytes = await fetch("/VJF_LetterHead_pdf.pdf").then((r) => {
+    if (!r.ok) throw new Error("Could not load VJF_LetterHead_pdf.pdf from /public");
     return r.arrayBuffer();
   });
 
