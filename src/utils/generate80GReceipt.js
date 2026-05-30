@@ -134,7 +134,7 @@ export async function generate80GReceipt({
   const receiptNo   = buildReceiptNumber(paymentId, receiptDate);
   const dateStr     = formatDate(receiptDate);
   const amtWords    = amountInWords(Math.round(amount));
-  const amtFormatted = "₹" + Number(amount).toLocaleString("en-IN");
+  const amtFormatted = "Rs. " + Number(amount).toLocaleString("en-IN");
 
   // ─────────────────────────────────────────────────────────────────────────
   //  RECEIPT TITLE
