@@ -78,7 +78,7 @@ useEffect(() => {
         <>
             <section
                 className="relative w-full overflow-hidden"
-                style={{ height: "clamp(300px, 52vw, 572px)" }}
+                style={{  height: "clamp(350px, 65vw, 700px)"}}
                 onMouseEnter={() => setPaused(true)}
                 onMouseLeave={() => setPaused(false)}
                 aria-label="Hero Banner"
