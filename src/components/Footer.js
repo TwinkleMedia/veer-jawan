@@ -90,7 +90,7 @@ export default function Footer() {
                         <ul className="space-y-3">
                             <li className="flex items-start gap-3">
                                 <LocationIcon />
-                                <span className="text-gray-600 text-sm">Address : Mumbai</span>
+                                <span className="text-gray-600 text-sm">Address : NL1B, Shatkar Apartment, LIG Building No. 58/6, 3rd Floor, Sector No. 10, Nerul West, Navi Mumbai, Maharashtra – 400706.</span>
                             </li>
                             <li className="flex items-start gap-3">
                                 <PhoneIcon />

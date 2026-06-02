@@ -73,8 +73,7 @@ export default function contact() {
                 Address
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Lorem ipsum dolor sit amet consectetur. Nulla varius id sagittis
-                donec.
+               NL1B, Shatkar Apartment, LIG Building No. 58/6, 3rd Floor, Sector No. 10, Nerul West, Navi Mumbai, Maharashtra – 400706.
               </p>
             </div>
 
@@ -85,7 +84,7 @@ export default function contact() {
                 Email Us
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                yourmail@gmail.com
+                veerjawanfoundation05@gmail.com
               </p>
             </div>
 
@@ -96,7 +95,7 @@ export default function contact() {
                 Call Us
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                +91 9653114082
+                +91 9653114082 / +91 9653114082
               </p>
             </div>
           </div>
