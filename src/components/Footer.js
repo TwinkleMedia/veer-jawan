@@ -94,7 +94,7 @@ export default function Footer() {
                             </li>
                             <li className="flex items-start gap-3">
                                 <PhoneIcon />
-                                <span className="text-gray-600 text-sm">Phone: 95940 37995 / 74997 36665</span>
+                                <span className="text-gray-600 text-sm">Phone: +91 95940 37995 / +91 9653114082</span>
                             </li>
                             <li className="flex items-start gap-3">
                                 <EmailIcon />

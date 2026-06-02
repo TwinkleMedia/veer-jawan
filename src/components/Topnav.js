@@ -19,7 +19,7 @@ export const Topnav = () => {
 
                 <div className='flex justify-between items-center gap-3'>
                     <Phone fill='blue' className='w-4 h-4' />
-                    <p className='text-sm lg:text-base'>95940 37995 / 74997 36665</p>
+                    <p className='text-sm lg:text-base'>+91 95940 37995 / +91 9653114082</p>
                 </div>
 
                 <div className='flex justify-between items-center gap-3'>

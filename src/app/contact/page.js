@@ -96,7 +96,7 @@ export default function contact() {
                 Call Us
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                +91 1234567891
+                +91 9653114082
               </p>
             </div>
           </div>
