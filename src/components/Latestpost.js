@@ -127,12 +127,7 @@ export default function Latestpost() {
               miracles happen. Become a time hero by volunteering with us. Meet
               new friends, gain new skills, get happiness and have fun!
             </p>
-            <a
-              href="#"
-              className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm px-6 py-2.5 rounded transition-colors duration-200"
-            >
-              Join Now
-            </a>
+           
           </div>
           <div className="flex-1 flex justify-center items-center">
             <div className="relative w-full max-w-sm">
