@@ -256,13 +256,6 @@ export default function About() {
                         <p className="text-gray-600 text-sm leading-relaxed mb-6 max-w-sm">
                             When you bring together those who have, with those who have not - miracles happen.Become a time hero by volunteering with us. Meet new friends, gain new skills, get happiness and have fun!
                         </p>
-
-                        <a
-                            href="#"
-                            className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm px-6 py-2.5 rounded transition-colors duration-200"
-                        >
-                            Join Now
-                        </a>
                     </div>
 
                     {/* Right Image */}
