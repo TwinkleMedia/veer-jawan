@@ -98,15 +98,7 @@ export default function contact() {
 
           {/* Map Card */}
           <div className="rounded-2xl overflow-hidden shadow-lg h-[420px]">
-            <iframe
-              title="Location Map"
-              src="https://maps.app.goo.gl/kHZRG18Lmx2gjuga7"
-              className="w-full h-full"
-              loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-              style={{ border: 0 }}
-            />
+           <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1885.8072514060298!2d73.0160519162987!3d19.036701298486108!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c3002c237caf%3A0x7dc1e2133102134e!2sShatkar%20Apartment%2C%20Sector%2010%2C%20Nerul%20West.!5e0!3m2!1sen!2sin!4v1780463713325!5m2!1sen!2sin" width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
         </div>
       </section>
