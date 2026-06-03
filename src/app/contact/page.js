@@ -98,7 +98,15 @@ export default function contact() {
 
           {/* Map Card */}
           <div className="rounded-2xl overflow-hidden shadow-lg h-[420px]">
-           <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1885.8072514060298!2d73.0160519162987!3d19.036701298486108!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c3002c237caf%3A0x7dc1e2133102134e!2sShatkar%20Apartment%2C%20Sector%2010%2C%20Nerul%20West.!5e0!3m2!1sen!2sin!4v1780463713325!5m2!1sen!2sin" width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <iframe
+              title="Location Map"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d60355.60788849879!2d72.95!3d19.18!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b8e7e3c9e24d%3A0x3b5b1a3e2e3e2e3e!2sThane%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000"
+              className="w-full h-full"
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+              style={{ border: 0 }}
+            />
           </div>
         </div>
       </section>
@@ -123,7 +131,7 @@ export default function contact() {
               new friends, gain new skills, get happiness and have fun!
             </p>
 
-            <a
+            <
               href="#"
               className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm px-6 py-2.5 rounded transition-colors duration-200"
             >
