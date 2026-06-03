@@ -100,7 +100,7 @@ export default function contact() {
           <div className="rounded-2xl overflow-hidden shadow-lg h-[420px]">
             <iframe
               title="Location Map"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d60355.60788849879!2d72.95!3d19.18!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b8e7e3c9e24d%3A0x3b5b1a3e2e3e2e3e!2sThane%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000"
+              src="https://maps.app.goo.gl/kHZRG18Lmx2gjuga7"
               className="w-full h-full"
               loading="lazy"
               allowFullScreen
