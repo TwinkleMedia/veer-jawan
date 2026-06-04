@@ -92,6 +92,9 @@ const RANKS = [
   "Admiral of the Fleet",
 ];
 
+// ── Constants ──────────────────────────────────────────────────────────────────
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
+
 const inputCls =
   "w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:border-[#293C86] focus:ring-2 focus:ring-[#293C86]/10 transition placeholder-gray-400";
 
@@ -248,9 +251,22 @@ export default function MembershipFormPage() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const makeFileHandler = (setFile, setPreview) => (e) => {
+  // ── File handler with 2 MB guard ─────────────────────────────────────────
+  const makeFileHandler = (setFile, setPreview, fieldName) => (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+      setError(
+        `"${fieldName}" is ${sizeMB} MB — please select a file under 2 MB. Tip: use a photo compression app on your phone before uploading.`
+      );
+      // reset the input so the same file can't be re-selected silently
+      e.target.value = "";
+      return;
+    }
+
+    setError(""); // clear any previous size error
     setFile(file);
     const reader = new FileReader();
     reader.onloadend = () => setPreview(reader.result);
@@ -282,9 +298,23 @@ export default function MembershipFormPage() {
 
     if (!photoFile || !aadharFile || !idCardFile) {
       setError(
-        "Please upload Passport Photo, Aadhar Card, and Martyr Soldier ID Card — all three are required.",
+        "Please upload Passport Photo, Aadhar Card, and Martyr Soldier ID Card — all three are required."
       );
       return;
+    }
+
+    // Double-check sizes at submit time (in case files were set before the guard was added)
+    const fileSizeChecks = [
+      { file: photoFile,   label: "Passport Photo" },
+      { file: aadharFile,  label: "Aadhar Card" },
+      { file: idCardFile,  label: "Martyr Soldier ID Card" },
+    ];
+    for (const { file, label } of fileSizeChecks) {
+      if (file.size > MAX_FILE_SIZE) {
+        const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+        setError(`"${label}" is ${sizeMB} MB — please select a file under 2 MB.`);
+        return;
+      }
     }
 
     setLoading(true);
@@ -296,16 +326,26 @@ export default function MembershipFormPage() {
       fd.append("aadharCard", aadharFile);
       fd.append("idCard", idCardFile);
 
+      console.log("[Membership] Submitting form...");
+      console.log("[Membership] File sizes:", {
+        photo:    `${(photoFile.size   / 1024).toFixed(0)} KB`,
+        aadhar:   `${(aadharFile.size  / 1024).toFixed(0)} KB`,
+        idCard:   `${(idCardFile.size  / 1024).toFixed(0)} KB`,
+      });
+
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/membership`,
         {
           method: "POST",
           credentials: "include",
           body: fd,
-        },
+        }
       );
 
+      console.log("[Membership] Response status:", res.status);
+
       const data = await res.json();
+      console.log("[Membership] Response body:", data);
 
       if (!res.ok) {
         setError(data.message || "Something went wrong. Please try again.");
@@ -316,8 +356,10 @@ export default function MembershipFormPage() {
       setSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
-      console.error(err);
-      setError("Network error. Please check your connection and try again.");
+      console.error("[Membership] Submit error:", err);
+      setError(
+        err?.message || "Network error. Please check your connection and try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -734,13 +776,16 @@ export default function MembershipFormPage() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
               <SectionHeader number="05" title="Photo & Document Uploads" />
               <div className="p-5 sm:p-6">
+                <p className="text-[11px] text-gray-400 mb-4 text-center">
+                  Each file must be <strong className="text-gray-600">under 2 MB</strong>. Compress large phone photos before uploading.
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                   <UploadBox
                     label="Passport Size Photo"
                     required
                     preview={photoPreview}
                     inputRef={fileInputRef}
-                    onChange={makeFileHandler(setPhotoFile, setPhotoPreview)}
+                    onChange={makeFileHandler(setPhotoFile, setPhotoPreview, "Passport Photo")}
                     onClear={() => {
                       setPhotoPreview(null);
                       setPhotoFile(null);
@@ -754,7 +799,7 @@ export default function MembershipFormPage() {
                     required
                     preview={aadharPreview}
                     inputRef={aadharInputRef}
-                    onChange={makeFileHandler(setAadharFile, setAadharPreview)}
+                    onChange={makeFileHandler(setAadharFile, setAadharPreview, "Aadhar Card")}
                     onClear={() => {
                       setAadharPreview(null);
                       setAadharFile(null);
@@ -768,7 +813,7 @@ export default function MembershipFormPage() {
                     required
                     preview={idCardPreview}
                     inputRef={idCardInputRef}
-                    onChange={makeFileHandler(setIdCardFile, setIdCardPreview)}
+                    onChange={makeFileHandler(setIdCardFile, setIdCardPreview, "Martyr Soldier ID Card")}
                     onClear={() => {
                       setIdCardPreview(null);
                       setIdCardFile(null);
@@ -816,9 +861,9 @@ export default function MembershipFormPage() {
 
             {/* ── Error Message ── */}
             {error && (
-              <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+              <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
                 <svg
-                  className="w-5 h-5 text-red-500 shrink-0"
+                  className="w-5 h-5 text-red-500 shrink-0 mt-0.5"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
