@@ -38,7 +38,7 @@ export const Topnav = () => {
 
           {/* Facebook */}
           <a
-            href="https://facebook.com/yourusername"
+            href="https://www.facebook.com/people/Veer-Jawan/100090190152111/"
             target="_blank"
             rel="noopener noreferrer"
             className="w-8 h-8 bg-white rounded-full flex justify-center items-center hover:bg-blue-800 text-blue-800 hover:text-white transition duration-300 cursor-pointer"
@@ -49,7 +49,7 @@ export const Topnav = () => {
 
           {/* Instagram */}
           <a
-            href="https://instagram.com/yourusername"
+            href="https://www.instagram.com/veerjawan.in/"
             target="_blank"
             rel="noopener noreferrer"
             className="w-8 h-8 bg-white rounded-full flex justify-center items-center hover:bg-pink-600 text-pink-600 hover:text-white transition duration-300 cursor-pointer"
@@ -60,7 +60,7 @@ export const Topnav = () => {
 
           {/* YouTube */}
           <a
-            href="https://youtube.com/@yourchannel"
+            href="https://www.youtube.com/@veerjawanfoundation_official"
             target="_blank"
             rel="noopener noreferrer"
             className="w-8 h-8 bg-white rounded-full flex justify-center items-center hover:bg-red-600 text-red-600 hover:text-white transition duration-300 cursor-pointer"
