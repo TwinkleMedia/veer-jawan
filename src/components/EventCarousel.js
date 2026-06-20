@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect, useRef, useCallback } from "react"
-import Link  from "next/link"
+import Link from "next/link"
+
 // ── Icons ─────────────────────────────────────────────────────────────────────
 const CalIcon = () => (
     <svg className="w-3.5 h-3.5 shrink-0 text-orange-500" viewBox="0 0 14 14" fill="none">
@@ -18,6 +19,12 @@ const PinIcon = () => (
     <svg className="w-3.5 h-3.5 shrink-0 text-orange-500" viewBox="0 0 14 14" fill="none">
         <path d="M7 1C4.8 1 3 2.8 3 5c0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4Z" stroke="currentColor" strokeWidth="1.3" />
         <circle cx="7" cy="5" r="1.3" stroke="currentColor" strokeWidth="1.2" />
+    </svg>
+)
+const BookIcon = () => (
+    <svg className="w-3 h-3 shrink-0" viewBox="0 0 12 12" fill="none">
+        <path d="M9.5 1H3a1 1 0 00-1 1v8a1 1 0 001 1h6.5a.5.5 0 00.5-.5v-9A.5.5 0 009.5 1z" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+        <path d="M4 4h4M4 6.5h4M4 9h2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
     </svg>
 )
 
@@ -57,7 +64,7 @@ export default function EventsCarousel() {
     const [dragging,  setDragging]  = useState(false)
     const [dragStart, setDragStart] = useState(0)
     const [dragDelta, setDragDelta] = useState(0)
-    const autoRef    = useRef(null)
+    const autoRef     = useRef(null)
     const viewportRef = useRef(null)
 
     useEffect(() => {
@@ -113,7 +120,7 @@ export default function EventsCarousel() {
                 <p className="text-center text-gray-400 text-sm py-10">No events scheduled yet.</p>
             ) : (
                 <>
-                    {/* Carousel row — constrained to max-w-2xl */}
+                    {/* Carousel row */}
                     <div className="flex items-center justify-center gap-2 px-3 pb-4 max-w-3xl mx-auto">
 
                         {/* Prev */}
@@ -130,7 +137,7 @@ export default function EventsCarousel() {
                         <div
                             ref={viewportRef}
                             className="relative flex-1 overflow-hidden cursor-grab active:cursor-grabbing rounded-2xl"
-                            style={{ height: "clamp(280px, 56vw, 320px)" }}
+                            style={{ height: "clamp(300px, 60vw, 340px)" }}
                             onMouseDown={e => onDragStart(e.clientX)}
                             onMouseMove={e => onDragMove(e.clientX)}
                             onMouseUp={onDragEnd}
@@ -159,10 +166,10 @@ export default function EventsCarousel() {
                                         }}
                                         className="absolute inset-0 w-full h-full"
                                     >
-                                        {/* ── Card: stacked on mobile, side-by-side on md+ ── */}
+                                        {/* Card */}
                                         <div className="w-full h-full bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden flex flex-col md:flex-row select-none">
 
-                                            {/* Image — full width on mobile, 40% on desktop */}
+                                            {/* Image */}
                                             <div className="relative w-full md:w-5/12 shrink-0 h-36 md:h-full">
                                                 <img
                                                     src={ev.image?.url}
@@ -178,14 +185,14 @@ export default function EventsCarousel() {
                                                     <span className="text-orange-100 text-[9px] font-bold tracking-widest mt-0.5">{getMonth(ev.date)}</span>
                                                 </div>
 
-                                                {/* Live pill — top right */}
+                                                {/* Live pill */}
                                                 <div className="absolute top-2.5 right-2.5">
                                                     <span className="bg-black/30 backdrop-blur-sm text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-white/20">
                                                         Live Event
                                                     </span>
                                                 </div>
 
-                                                {/* Title overlay — only on mobile (hidden on md) */}
+                                                {/* Title overlay — mobile only */}
                                                 <div className="absolute bottom-0 left-0 right-0 px-3 pb-2 md:hidden">
                                                     <h3 className="text-white font-bold text-sm leading-snug line-clamp-2 drop-shadow">
                                                         {ev.title}
@@ -226,14 +233,33 @@ export default function EventsCarousel() {
                                                     </p>
                                                 )}
 
-                                                {/* CTA */}
-                                                <Link href="/events"
-                                                    className="mt-auto flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 active:scale-[0.98] text-white text-xs font-bold uppercase tracking-wide transition-all shadow-sm whitespace-nowrap">
-                                                    Learn More
-                                                    <svg className="w-3 h-3 shrink-0" viewBox="0 0 12 12" fill="none">
-                                                        <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                    </svg>
-                                                </Link>
+                                                {/* CTA Buttons */}
+                                                <div className="mt-auto flex items-center gap-2">
+
+                                                    {/* Learn More */}
+                                                    <Link
+                                                        href="/events"
+                                                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-[#1E3A8A] hover:bg-blue-900 active:scale-[0.98] text-white text-xs font-bold uppercase tracking-wide transition-all shadow-sm whitespace-nowrap"
+                                                    >
+                                                        Learn More
+                                                        <svg className="w-3 h-3 shrink-0" viewBox="0 0 12 12" fill="none">
+                                                            <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </Link>
+
+                                                    {/* Book Now — only if bookingLink exists */}
+                                                    {ev.bookingLink && (
+                                                        <a
+                                                            href={ev.bookingLink}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 active:scale-[0.98] text-white text-xs font-bold uppercase tracking-wide transition-all shadow-sm whitespace-nowrap"
+                                                        >
+                                                            Book Now
+                                                            <BookIcon />
+                                                        </a>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
