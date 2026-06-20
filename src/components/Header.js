@@ -12,7 +12,7 @@ const NAV_LINKS = [
   },
   { label: "Gallery", href: "/gallery" },
   { label: "Events", href: "/events" },
-  { label: "Donate Us", href: "/donate", isDonate: true },
+  { label: "Donate Now", href: "/donate", isDonate: true },
   { label: "Contact", href: "/contact" },
 ];
 

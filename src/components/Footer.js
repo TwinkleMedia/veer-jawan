@@ -46,9 +46,7 @@ export default function Footer() {
                     <div>
                         <h3 className="text-blue-900 font-bold text-xl mb-4">About us</h3>
                         <p className="text-gray-600 text-sm leading-relaxed">
-                            Veerjawan Foundation: Honoring soldiers&apos; sacrifice by supporting their families. Your
-                            donation provides vital assistance, ensuring heroes are never forgotten. Join us in
-                            making a lasting impact.
+                           Veer Jawan Foundation: Honoring soldiers' sacrifices by supporting their families. Your donation provides vital assistance, ensuring our heroes are never forgotten. Join us in making a lasting impact.
                         </p>
                     </div>
 

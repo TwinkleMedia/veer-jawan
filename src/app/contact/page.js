@@ -92,10 +92,10 @@ export default function contact() {
             <div className="bg-white rounded-2xl shadow-md p-6 flex flex-col items-center text-center hover:shadow-xl transition-shadow duration-300">
               <Phone className="w-8 h-8 text-[#FF671F] mb-2" />
               <h3 className="text-lg font-semibold text-[#2d3e8b] mb-2">
-                Call Us
+                Call Now
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                +91 9653114082 / +91 9653114082
+                +91 95940 37995 / +91 9653114082
               </p>
             </div>
           </div>
