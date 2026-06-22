@@ -33,7 +33,7 @@ export default function About() {
                 </div>
             </div>
             {/* Our Mission */}
-            <section className="w-full py-16 overflow-hidden">
+            <section className="w-full py-16 overflow-hidden bg-white">
                 <div className="max-w-7xl mx-auto px-4 md:px-8">
 
                     {/* Top Section */}
