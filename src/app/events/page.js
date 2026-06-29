@@ -173,7 +173,7 @@ function PageWrapper({ children }) {
       <Topnav />
       <Header />
       <div className="relative w-full h-[350px] md:h-[450px] lg:h-[550px]">
-        <img src="/aboutBanner.png" alt="Events Hero" className="w-full h-full object-contain" />
+        <img src="/aboutBanner.png" alt="Events Hero" className="w-full h-full object-cover" />
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center">
           <h1 className="text-3xl md:text-6xl lg:text-8xl font-bold text-center my-6 text-[#293C86]">
             Events

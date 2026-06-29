@@ -49,7 +49,7 @@ export const Topnav = () => {
 
           {/* Instagram */}
           <a
-            href="https://www.instagram.com/veerjawan.in/"
+            href="https://www.instagram.com/veer_jawan_foundation/"
             target="_blank"
             rel="noopener noreferrer"
             className="w-8 h-8 bg-white rounded-full flex justify-center items-center hover:bg-pink-600 text-pink-600 hover:text-white transition duration-300 cursor-pointer"
@@ -71,7 +71,7 @@ export const Topnav = () => {
 
           {/* LinkedIn */}
           <a
-            href="https://linkedin.com/in/yourprofile"
+            href="https://www.linkedin.com/in/suresh-kakde-899837284/"
             target="_blank"
             rel="noopener noreferrer"
             className="w-8 h-8 bg-white rounded-full flex justify-center items-center hover:bg-blue-700 text-blue-700 hover:text-white transition duration-300 cursor-pointer"
