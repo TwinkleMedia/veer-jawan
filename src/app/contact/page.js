@@ -8,6 +8,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 
 import Link from "next/link";
 import React, { useState } from "react";
+import EventPopupButton from "@/components/EventPopupButton";
 
 export default function contact() {
   const [formData, setFormData] = useState({
@@ -37,6 +38,7 @@ export default function contact() {
   return (
     <>
       <DonateButton />
+      <EventPopupButton />
       <Topnav />
       <Header />
       {/* Hero Section */}

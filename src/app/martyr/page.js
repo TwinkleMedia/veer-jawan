@@ -7,6 +7,7 @@ import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import DonateButton from "@/components/DonateButton";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import EventPopupButton from "@/components/EventPopupButton";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const PAGE_SIZE = 8;
@@ -88,6 +89,7 @@ export default function Martyr() {
   return (
     <>
       <DonateButton />
+      <EventPopupButton />
       <WhatsAppButton />
       <Topnav />
       <Header />

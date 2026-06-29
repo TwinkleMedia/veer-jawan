@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import DonateButton from "@/components/DonateButton";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import EventPopupButton from "@/components/EventPopupButton";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -377,6 +378,7 @@ export default function GallerySection() {
   return (
     <>
       <DonateButton />
+      <EventPopupButton />
       <WhatsAppButton />
       <Topnav />
       <Header />

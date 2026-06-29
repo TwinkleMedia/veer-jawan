@@ -7,11 +7,13 @@ import Link from 'next/link'
 import React from 'react'
 import DonateButton from '@/components/DonateButton'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import EventPopupButton from '@/components/EventPopupButton'
 
 export default function About() {
     return (
         <>
             <DonateButton/>
+            <EventPopupButton />
             <WhatsAppButton/>
             <Topnav />
             <Header />
