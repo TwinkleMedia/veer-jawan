@@ -57,7 +57,7 @@ function EventCard({ event }) {
         style={{ fontFamily: "'Poppins', sans-serif" }}
       >
         {/* ── Full-bleed image ── */}
-        <div className="relative w-full h-64 bg-gray-100 overflow-hidden">
+        <div className="relative w-full h-80 bg-gray-100 overflow-hidden">
           {imageUrl ? (
             <img
               src={imageUrl}
