@@ -189,7 +189,7 @@ export default function About() {
                             {/* Left Text */}
                             <div>
                                 <h3 className="text-lg font-bold text-blue-900 mb-2 flex items-center gap-2">
-                                    Jai Hind &#127470;&#127475;
+                                    Jai Hind ;
                                 </h3>
 
                                 <p className="text-orange-600 font-semibold mb-3">
