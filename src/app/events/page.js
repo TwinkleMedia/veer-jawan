@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import DonateButton from "@/components/DonateButton";
 import Link from "next/link";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import EventPopupButton from "@/components/EventPopupButton";
 
 function formatDate(iso) {
   if (!iso) return "—";
@@ -61,7 +62,7 @@ function EventCard({ event }) {
             <img
               src={imageUrl}
               alt={event.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-100">
@@ -172,7 +173,7 @@ function PageWrapper({ children }) {
       <Topnav />
       <Header />
       <div className="relative w-full h-[350px] md:h-[450px] lg:h-[550px]">
-        <img src="/aboutBanner.png" alt="Events Hero" className="w-full h-full object-cover" />
+        <img src="/aboutBanner.png" alt="Events Hero" className="w-full h-full object-contain" />
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center">
           <h1 className="text-3xl md:text-6xl lg:text-8xl font-bold text-center my-6 text-[#293C86]">
             Events
@@ -295,6 +296,7 @@ export default function EventsCarousel() {
   return (
     <PageWrapper>
       <DonateButton />
+      <EventPopupButton />
       <WhatsAppButton />
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');`}</style>
 
