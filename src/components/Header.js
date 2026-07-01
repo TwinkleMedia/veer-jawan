@@ -131,7 +131,7 @@ export default function Header() {
             <img
               src="/Flag_of_India.gif"
               alt="Indian Flag"
-              className="w-8 h-6 sm:w-9 sm:h-7 object-cover rounded-[2px] shadow-sm flex-shrink-0"
+              className="w-10 h-8 sm:w-9 sm:h-7 object-cover rounded-[2px] shadow-sm flex-shrink-0"
             />
 
             <div className="w-11 h-11 flex items-center justify-content-center flex-shrink-0">
