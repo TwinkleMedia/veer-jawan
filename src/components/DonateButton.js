@@ -14,7 +14,7 @@ const CHAKRA_LINES = Array.from({ length: 24 }).map((_, i) => {
   };
 });
 
-function AshokaChakra({ className, style }) {
+function AshokaChakra({ className, style, color = "#1e40af" }) {
   return (
     <svg
       viewBox="0 0 100 100"
@@ -22,8 +22,8 @@ function AshokaChakra({ className, style }) {
       style={style}
       xmlns="http://www.w3.org/2000/svg"
     >
-      <circle cx="50" cy="50" r="47" fill="none" stroke="#1e40af" strokeWidth="5" />
-      <circle cx="50" cy="50" r="8" fill="#1e40af" />
+      <circle cx="50" cy="50" r="47" fill="none" stroke={color} strokeWidth="5" />
+      <circle cx="50" cy="50" r="8" fill={color} />
       {CHAKRA_LINES.map((line, i) => (
         <line
           key={i}
@@ -31,7 +31,7 @@ function AshokaChakra({ className, style }) {
           y1={line.y1}
           x2={line.x2}
           y2={line.y2}
-          stroke="#1e40af"
+          stroke={color}
           strokeWidth="3"
           strokeLinecap="round"
         />
@@ -96,52 +96,36 @@ export default function DonateButton() {
         </Link>
       </div>
 
-      {/* ── MOBILE: bottom-right corner ── */}
-      <div className="md:hidden fixed bottom-5 right-4 z-50">
-        {pulse && (
-          <>
-            <span
-              className="absolute inset-0 rounded-2xl border-4 border-orange-400 opacity-70 animate-ping pointer-events-none"
-              style={{ animationDuration: "1.6s" }}
-            />
-            <span
-              className="absolute inset-0 rounded-2xl border-2 border-green-500 opacity-40 animate-ping pointer-events-none"
-              style={{ animationDuration: "2.4s", animationDelay: "0.5s" }}
-            />
-          </>
-        )}
-
+      {/* ── MOBILE: right half of a fixed bottom bar ── */}
+      <div className="md:hidden fixed bottom-0 right-0 w-1/2 z-50">
         <Link
           href="/donate"
           onClick={() => setPulse(false)}
-          className="relative flex items-center gap-2 bg-white
-            border-2 border-orange-500 rounded-2xl
-            pl-2 pr-3 py-1.5 shadow-2xl
-            active:scale-95 transition-all duration-300 group"
+          className="relative flex items-center justify-center gap-2
+            bg-orange-500 rounded-tl-2xl
+            px-3 py-2.5 shadow-[0_-4px_12px_rgba(0,0,0,0.15)]
+            active:scale-95 active:bg-orange-600 transition-all duration-200"
         >
-          {/* Tricolor strip */}
-          <span className="flex flex-col w-1 h-7 rounded-full overflow-hidden shrink-0">
-            <span className="flex-1 bg-orange-500" />
-            <span className="flex-1 bg-white border-y border-gray-300" />
-            <span className="flex-1 bg-green-600" />
-          </span>
+          {pulse && (
+            <span
+              className="absolute inset-0 rounded-tl-2xl border-2 border-white opacity-40 animate-ping pointer-events-none"
+              style={{ animationDuration: "1.8s" }}
+            />
+          )}
 
-          {/* Text */}
           <span className="flex flex-col leading-tight">
-            <span className="text-[8px] font-extrabold tracking-[0.15em] text-orange-500 uppercase">
+            <span className="text-[8px] font-extrabold tracking-[0.15em] text-orange-100 uppercase">
               Support India
             </span>
-            <span className="text-xs font-extrabold text-gray-900 whitespace-nowrap">
+            <span className="text-xs font-extrabold text-white whitespace-nowrap">
               Donate Now 🙏
-            </span>
-            <span className="text-[8px] text-gray-400 font-medium whitespace-nowrap">
-              Veer Jawan Foundation
             </span>
           </span>
 
           <AshokaChakra
             className="w-6 h-6 shrink-0 animate-spin"
             style={{ animationDuration: "8s" }}
+            color="#ffffff"
           />
         </Link>
       </div>

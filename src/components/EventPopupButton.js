@@ -70,40 +70,29 @@ export default function EventPopupButton() {
         </Link>
       </div>
 
-      {/* ── MOBILE: bottom-right, just above Donate button ── */}
-      <div className="md:hidden fixed bottom-[5.25rem] right-4 z-50">
-        {pulse && (
-          <span
-            className="absolute inset-0 rounded-2xl border-2 border-[#293C86] opacity-40 animate-ping pointer-events-none"
-            style={{ animationDuration: "2.2s" }}
-          />
-        )}
-
+      {/* ── MOBILE: left half of a fixed bottom bar ── */}
+      <div className="md:hidden fixed bottom-0 left-0 w-1/2 z-50">
         <Link
           href="/events"
           onClick={() => setPulse(false)}
-          className="relative flex items-center gap-2 bg-white
-            border-2 border-[#293C86] rounded-2xl
-            pl-2 pr-3 py-1.5 shadow-2xl
-            active:scale-95 transition-all duration-300 group"
+          className="relative flex items-center justify-center gap-2
+            bg-white border-t border-gray-200 rounded-tr-2xl
+            px-3 py-2.5 shadow-[0_-4px_12px_rgba(0,0,0,0.1)]
+            active:scale-95 active:bg-gray-50 transition-all duration-200"
         >
-          {/* Tricolor strip */}
-          <span className="flex flex-col w-1 h-7 rounded-full overflow-hidden shrink-0">
-            <span className="flex-1 bg-orange-500" />
-            <span className="flex-1 bg-white border-y border-gray-300" />
-            <span className="flex-1 bg-green-600" />
-          </span>
+          {pulse && (
+            <span
+              className="absolute inset-0 rounded-tr-2xl border-2 border-[#293C86] opacity-30 animate-ping pointer-events-none"
+              style={{ animationDuration: "2.2s" }}
+            />
+          )}
 
-          {/* Text */}
           <span className="flex flex-col leading-tight">
             <span className="text-[8px] font-extrabold tracking-[0.15em] text-[#293C86] uppercase">
               Stay Updated
             </span>
             <span className="text-xs font-extrabold text-gray-900 whitespace-nowrap">
               Upcoming Events 📅
-            </span>
-            <span className="text-[8px] text-gray-400 font-medium whitespace-nowrap">
-              Veer Jawan Foundation
             </span>
           </span>
 
