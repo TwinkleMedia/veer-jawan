@@ -71,14 +71,15 @@ export default function EventPopupButton() {
       </div>
 
       {/* ── MOBILE: left half of a fixed bottom bar ── */}
+     {/* ── MOBILE: left half of a fixed bottom bar ── */}
       <div className="md:hidden fixed bottom-0 left-0 w-1/2 z-50">
         <Link
           href="/events"
           onClick={() => setPulse(false)}
-          className="relative flex items-center justify-center gap-2
-            bg-white border-t border-gray-200 rounded-tr-2xl
-            px-3 py-2.5 shadow-[0_-4px_12px_rgba(0,0,0,0.1)]
-            active:scale-95 active:bg-gray-50 transition-all duration-200"
+          className="relative flex flex-col items-start justify-center
+            bg-gray-200 rounded-tr-2xl
+            px-4 py-2.5 shadow-[0_-4px_12px_rgba(0,0,0,0.1)]
+            active:scale-95 active:bg-gray-300 transition-all duration-200"
         >
           {pulse && (
             <span
@@ -87,16 +88,15 @@ export default function EventPopupButton() {
             />
           )}
 
-          <span className="flex flex-col leading-tight">
-            <span className="text-[8px] font-extrabold tracking-[0.15em] text-[#293C86] uppercase">
-              Stay Updated
+          <span className="flex items-center gap-1.5">
+            <span className="text-sm font-extrabold text-[#293C86] whitespace-nowrap">
+              Upcoming Events
             </span>
-            <span className="text-xs font-extrabold text-gray-900 whitespace-nowrap">
-              Upcoming Events 📅
-            </span>
+            <CalendarIcon className="w-4 h-4 shrink-0" />
           </span>
-
-          <CalendarIcon className="w-6 h-6 shrink-0" />
+          <span className="text-[10px] text-gray-500 font-medium whitespace-nowrap">
+            Stay Updated
+          </span>
         </Link>
       </div>
     </>

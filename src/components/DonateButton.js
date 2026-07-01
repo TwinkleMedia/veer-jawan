@@ -97,13 +97,14 @@ export default function DonateButton() {
       </div>
 
       {/* ── MOBILE: right half of a fixed bottom bar ── */}
+      {/* ── MOBILE: right half of a fixed bottom bar ── */}
       <div className="md:hidden fixed bottom-0 right-0 w-1/2 z-50">
         <Link
           href="/donate"
           onClick={() => setPulse(false)}
-          className="relative flex items-center justify-center gap-2
+          className="relative flex flex-col items-start justify-center
             bg-orange-500 rounded-tl-2xl
-            px-3 py-2.5 shadow-[0_-4px_12px_rgba(0,0,0,0.15)]
+            px-4 py-2.5 shadow-[0_-4px_12px_rgba(0,0,0,0.15)]
             active:scale-95 active:bg-orange-600 transition-all duration-200"
         >
           {pulse && (
@@ -113,20 +114,19 @@ export default function DonateButton() {
             />
           )}
 
-          <span className="flex flex-col leading-tight">
-            <span className="text-[8px] font-extrabold tracking-[0.15em] text-orange-100 uppercase">
-              Support India
+          <span className="flex items-center gap-1.5">
+            <span className="text-sm font-extrabold text-white whitespace-nowrap">
+              Donate Now
             </span>
-            <span className="text-xs font-extrabold text-white whitespace-nowrap">
-              Donate Now 🙏
-            </span>
+            <AshokaChakra
+              className="w-4 h-4 shrink-0 animate-spin"
+              style={{ animationDuration: "8s" }}
+              color="#ffffff"
+            />
           </span>
-
-          <AshokaChakra
-            className="w-6 h-6 shrink-0 animate-spin"
-            style={{ animationDuration: "8s" }}
-            color="#ffffff"
-          />
+          <span className="text-[10px] text-orange-100 font-medium whitespace-nowrap">
+            Veer Jawan Foundation
+          </span>
         </Link>
       </div>
     </>
