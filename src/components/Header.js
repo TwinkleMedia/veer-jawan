@@ -125,7 +125,15 @@ export default function Header() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center h-16 gap-3">
 
           {/* Logo */}
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 flex-shrink-0 group" aria-label="Home">
+            {/* Waving India flag GIF */}
+            <img
+              src="/Flag_of_India.gif"
+              alt="Indian Flag"
+              className="w-8 h-6 sm:w-9 sm:h-7 object-cover rounded-[2px] shadow-sm flex-shrink-0"
+            />
+
             <div className="w-11 h-11 flex items-center justify-content-center flex-shrink-0">
               <img src="/logo.png" />
             </div>
