@@ -77,7 +77,7 @@ export default function EventPopupButton() {
           href="/events"
           onClick={() => setPulse(false)}
           className="relative flex flex-col items-start justify-center
-            bg-gray-200 
+            bg-[#293C86]
             px-4 py-2.5 shadow-[0_-4px_12px_rgba(0,0,0,0.1)]
             active:scale-95 active:bg-gray-300 transition-all duration-200"
         >
@@ -89,12 +89,12 @@ export default function EventPopupButton() {
           )}
 
           <span className="flex items-center gap-1.5">
-            <span className="text-sm font-extrabold text-[#293C86] whitespace-nowrap">
+            <span className="text-sm font-extrabold text-white whitespace-nowrap">
               Upcoming Events
             </span>
             <CalendarIcon className="w-4 h-4 shrink-0" />
           </span>
-          <span className="text-[10px] text-gray-500 font-medium whitespace-nowrap">
+          <span className="text-[10px] text-white font-medium whitespace-nowrap">
             Stay Updated
           </span>
         </Link>
