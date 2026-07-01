@@ -77,13 +77,13 @@ export default function EventPopupButton() {
           href="/events"
           onClick={() => setPulse(false)}
           className="relative flex flex-col items-start justify-center
-            bg-gray-200 rounded-tr-2xl
+            bg-gray-200 
             px-4 py-2.5 shadow-[0_-4px_12px_rgba(0,0,0,0.1)]
             active:scale-95 active:bg-gray-300 transition-all duration-200"
         >
           {pulse && (
             <span
-              className="absolute inset-0 rounded-tr-2xl border-2 border-[#293C86] opacity-30 animate-ping pointer-events-none"
+              className="absolute inset-0  border-2 border-[#293C86] opacity-30 animate-ping pointer-events-none"
               style={{ animationDuration: "2.2s" }}
             />
           )}

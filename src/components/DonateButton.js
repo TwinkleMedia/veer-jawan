@@ -103,13 +103,13 @@ export default function DonateButton() {
           href="/donate"
           onClick={() => setPulse(false)}
           className="relative flex flex-col items-start justify-center
-            bg-orange-500 rounded-tl-2xl
+            bg-orange-500 
             px-4 py-2.5 shadow-[0_-4px_12px_rgba(0,0,0,0.15)]
             active:scale-95 active:bg-orange-600 transition-all duration-200"
         >
           {pulse && (
             <span
-              className="absolute inset-0 rounded-tl-2xl border-2 border-white opacity-40 animate-ping pointer-events-none"
+              className="absolute inset-0  border-2 border-white opacity-40 animate-ping pointer-events-none"
               style={{ animationDuration: "1.8s" }}
             />
           )}
