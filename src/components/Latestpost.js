@@ -55,7 +55,7 @@ export default function Latestpost() {
         <div className="max-w-7xl mx-auto">
           {/* Heading */}
           <h2 className="text-center text-2xl md:text-3xl font-bold text-[#293C86] mb-8">
-            Latest Post
+           LATEST POST 
           </h2>
 
           {/* Loading state */}

@@ -149,9 +149,9 @@ export default function About() {
                         {/* Left Content */}
                         <div>
                             <h2 className="text-xl md:text-2xl font-semibold text-blue-900 mb-3">
-                                Welcome to{" "}
+                              WELCOME TO{" "}
                                 <span className="text-orange-600 font-bold">
-                                    Veer Jawan Foundation
+                                  VEER JAWAN FOUNDATION  
                                 </span>
                             </h2>
 

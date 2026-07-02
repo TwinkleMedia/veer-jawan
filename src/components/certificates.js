@@ -290,8 +290,8 @@ export default function CertificatesSection() {
             Our Achievements
           </p>
           <h2 className="text-2xl md:text-3xl font-extrabold text-[#293C86] leading-tight">
-            Certificates &{" "}
-            <span className="text-orange-500">Recognition</span>
+            CERTIFICATES & {" "}
+            <span className="text-orange-500">RECOGNITION </span>
           </h2>
           <div className="flex items-center justify-center gap-2 mt-4">
             <div className="w-8 h-[2px] bg-orange-500" />

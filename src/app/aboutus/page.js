@@ -44,7 +44,7 @@ export default function About() {
                         {/* Left Content */}
                         <div>
                             <h2 className="text-xl md:text-3xl font-bold text-[#2d3e8b] mb-4">
-                                Our Mission
+                                OUR MISSION
                             </h2>
 
                             <p className="text-gray-700 md:text-lg mb-6 leading-relaxed">
@@ -106,7 +106,7 @@ export default function About() {
 
                     {/* Section Heading */}
                     <h2 className="text-xl md:text-3xl font-bold text-[#2d3e8b] mb-4 text-center">
-                        Our Vision
+                         OUR VISION
                     </h2>
                     <p className="text-center leading-relaxed text-base md:text-lg max-w-3xl mx-auto mb-10">
                         To build a structured and sustainable support system that ensures long-term stability, access to opportunities, and continuous development for the families we serve.
@@ -184,7 +184,7 @@ export default function About() {
 
                     {/* Section Heading */}
                     <h2 className="text-xl md:text-3xl font-bold text-[#2d3e8b] mb-4 text-center">
-                        Our Values
+                         OUR VALUES
                     </h2>
 
                     {/* Cards Grid */}

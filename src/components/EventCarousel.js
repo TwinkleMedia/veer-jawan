@@ -109,7 +109,7 @@ export default function EventsCarousel() {
             {/* Header */}
             <div className="text-center px-4 pt-8 pb-5">
                 <p className="text-[10px] font-bold text-orange-500 uppercase tracking-[0.2em] mb-1">What's happening</p>
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#1E3A8A]">Upcoming Events</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold text-[#1E3A8A]">UPCOMING  EVENTS</h2>
                 <div className="w-10 h-0.5 bg-orange-400 mx-auto mt-2.5 rounded-full" />
                 <p className="text-xs text-gray-400 mt-2 italic">Join us and make a difference</p>
             </div>
