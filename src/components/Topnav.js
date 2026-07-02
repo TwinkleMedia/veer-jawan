@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Mail, Phone, Youtube, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Mail, Phone, Youtube, Linkedin, Twitter } from "lucide-react";
 import React from "react";
 
 export const Topnav = () => {
@@ -71,12 +71,22 @@ export const Topnav = () => {
 
           {/* LinkedIn */}
           <a
-            href="https://www.linkedin.com/in/suresh-kakde-899837284/"
+            href="https://www.linkedin.com/in/suresh-kakde-899837284/."
             target="_blank"
             rel="noopener noreferrer"
             className="w-8 h-8 bg-white rounded-full flex justify-center items-center hover:bg-blue-700 text-blue-700 hover:text-white transition duration-300 cursor-pointer"
           >
             <Linkedin className="w-5 h-5" />
+          </a>
+
+          {/* X (Twitter) */}
+          <a
+            href="https://x.com/SureshBkakde"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-8 h-8 bg-white rounded-full flex justify-center items-center hover:bg-black text-black hover:text-white transition duration-300 cursor-pointer"
+          >
+            <Twitter className="w-5 h-5" />
           </a>
 
         </div>
