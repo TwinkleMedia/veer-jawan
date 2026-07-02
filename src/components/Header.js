@@ -7,7 +7,7 @@ const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/aboutus" },
   {
-    label: "Martyr Veer Jawan",
+    label: "Ex-serviceman",
     href: "/martyr",
   },
   { label: "Gallery", href: "/gallery" },
