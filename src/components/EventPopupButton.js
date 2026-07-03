@@ -59,14 +59,12 @@ export default function EventPopupButton() {
               Stay Updated
             </span>
             <span className="text-sm font-extrabold text-gray-900 group-hover:text-[#293C86] transition-colors whitespace-nowrap">
-              Upcoming Events 📅
+              Upcoming Events 
             </span>
             <span className="text-[9px] text-gray-400 font-medium whitespace-nowrap">
               Veer Jawan Foundation
             </span>
           </span>
-
-          <CalendarIcon className="w-7 h-7 shrink-0" />
         </Link>
       </div>
 

@@ -407,7 +407,7 @@ export default function GallerySection() {
           <p className="text-orange-400 text-xs font-bold uppercase tracking-[0.3em] mb-3">
             Visual Stories
           </p>
-          <h1 className="text-4xl md:text-6xl font-bold text-white drop-shadow-lg">Our Gallery</h1>
+          <h1 className="text-4xl md:text-6xl font-bold text-white drop-shadow-lg">OUR GALLERY</h1>
           <p className="mt-2 text-white/70 text-sm max-w-xs">
             A collection of moments, memories &amp; milestones
           </p>
