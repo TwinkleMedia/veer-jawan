@@ -167,7 +167,7 @@ export default function ReelWidget({
           >
             <video
               ref={miniVideoRef}
-              src="/videos/reel.mp4"
+              src="https://res.cloudinary.com/dm9dtfpjd/video/upload/v1783751416/reel_jkessu.mp4"
               poster={posterSrc}
               muted
               loop
