@@ -121,16 +121,16 @@ export default function ReelWidget({
           type="button"
           onClick={() => setView("mini")}
           aria-label="Open video"
-          className="fixed bottom-4 left-4 z-50 h-14 w-14 overflow-hidden rounded-full
+          className="fixed bottom-24 left-4 z-50 h-14 w-14 overflow-hidden rounded-full
                      border-2 border-white shadow-[0_4px_18px_rgba(0,0,0,0.35)]
                      ring-2 ring-orange-500/70
                      transition-transform duration-200 ease-out
                      hover:scale-105 active:scale-95
-                     sm:h-16 sm:w-16"
+                     sm:bottom-4 sm:h-16 sm:w-16"
         >
           {posterSrc ? (
             <img
-              src={posterSrc}
+              src="https://res.cloudinary.com/dm9dtfpjd/image/upload/v1783752813/image_gc6rja.png"
               alt=""
               className="h-full w-full object-cover"
             />
@@ -148,7 +148,7 @@ export default function ReelWidget({
       {/* ---------------------------------------------------------------- */}
       {view === "mini" && (
         <div
-          className="fixed bottom-4 left-4 z-50 w-24 sm:w-32 md:w-40
+          className="fixed bottom-24 left-4 z-50 w-24 sm:bottom-4 sm:w-32 md:w-40
                      rounded-2xl overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.35)]
                      ring-1 ring-white/70"
         >
