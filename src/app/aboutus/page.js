@@ -8,11 +8,13 @@ import React from 'react'
 import DonateButton from '@/components/DonateButton'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import EventPopupButton from '@/components/EventPopupButton'
+import ReelWidget from '@/components/ReelWidget'
 
 export default function About() {
     return (
         <>
             <DonateButton/>
+            <ReelWidget/>
             <EventPopupButton />
             <WhatsAppButton/>
             <Topnav />

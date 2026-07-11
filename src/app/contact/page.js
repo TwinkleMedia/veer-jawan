@@ -9,6 +9,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import EventPopupButton from "@/components/EventPopupButton";
+import ReelWidget from "@/components/ReelWidget";
 
 export default function contact() {
   const [formData, setFormData] = useState({
@@ -38,6 +39,7 @@ export default function contact() {
   return (
     <>
       <DonateButton />
+      <ReelWidget/>
       <EventPopupButton />
       <Topnav />
       <Header />

@@ -8,6 +8,7 @@ import DonateButton from "@/components/DonateButton";
 import Link from "next/link";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import EventPopupButton from "@/components/EventPopupButton";
+import ReelWidget from "@/components/ReelWidget";
 
 function formatDate(iso) {
   if (!iso) return "—";
@@ -283,6 +284,7 @@ export default function EventsCarousel() {
   return (
     <PageWrapper>
       <DonateButton />
+      <ReelWidget />
       <EventPopupButton />
       <WhatsAppButton />
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');`}</style>
