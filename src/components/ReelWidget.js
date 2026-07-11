@@ -167,7 +167,7 @@ export default function ReelWidget({
           >
             <video
               ref={miniVideoRef}
-              src={videoSrc}
+              src="/videos/veerjawan_2_7_26.mp4"
               poster={posterSrc}
               muted
               loop
