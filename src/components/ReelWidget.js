@@ -235,7 +235,7 @@ export default function ReelWidget({
             <div className="relative aspect-[9/16] w-full bg-black">
               <video
                 ref={expandedVideoRef}
-                src={videoSrc}
+                src="https://res.cloudinary.com/dm9dtfpjd/video/upload/v1783751416/reel_jkessu.mp4"
                 poster={posterSrc}
                 loop
                 playsInline
