@@ -13,34 +13,34 @@ export default function Banner() {
     const timerRef = useRef(null);
 
     // ✅ FIXED FETCH
-   useEffect(() => {
-    const fetchBanners = async () => {
-        try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner`);
-            const data = await res.json();
+    useEffect(() => {
+        const fetchBanners = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner`);
+                const data = await res.json();
 
-            const formatted = data.map((item) => ({
-                src: item.imageUrl,
-            }));
+                const formatted = data.map((item) => ({
+                    src: item.imageUrl,
+                }));
 
-            setSlides(formatted);
-        } catch (error) {
-            console.error("Failed To Fetch banners", error);
-        }
-    };
+                setSlides(formatted);
+            } catch (error) {
+                console.error("Failed To Fetch banners", error);
+            }
+        };
 
-    fetchBanners();
-}, []); // ✅ ALWAYS empty array
+        fetchBanners();
+    }, []); // ✅ ALWAYS empty array
 
-useEffect(() => {
-    if (paused || slides.length === 0) return;
+    useEffect(() => {
+        if (paused || slides.length === 0) return;
 
-    const id = setTimeout(() => {
-        setCurrent(c => (c + 1) % slides.length);
-    }, 5000);
+        const id = setTimeout(() => {
+            setCurrent(c => (c + 1) % slides.length);
+        }, 5000);
 
-    return () => clearTimeout(id);
-}, [current, paused, slides]); // ✅ FIXED (always same)
+        return () => clearTimeout(id);
+    }, [current, paused, slides]);
 
     const goTo = (index) => {
         if (animating || index === current) return;
@@ -53,7 +53,6 @@ useEffect(() => {
         }, 700);
     };
 
-    // ✅ USE slides instead of SLIDES
     const next = () => {
         if (slides.length === 0) return;
         goTo((current + 1) % slides.length);
@@ -64,21 +63,11 @@ useEffect(() => {
         goTo((current - 1 + slides.length) % slides.length);
     };
 
-    useEffect(() => {
-        if (paused || slides.length === 0) return;
-
-        const id = setTimeout(() => {
-            setCurrent(c => (c + 1) % slides.length);
-        }, 5000);
-
-        return () => clearTimeout(id);
-    }, [current, paused, slides]);
-
     return (
         <>
             <section
-                className="relative w-full overflow-hidden"
-                style={{  height: "clamp(350px, 70vw, 700px)"}}
+                className="relative w-full overflow-hidden bg-black"
+                style={{ aspectRatio: "16 / 9" }} // ✅ Keeps container shape matching image shape at ALL screen sizes
                 onMouseEnter={() => setPaused(true)}
                 onMouseLeave={() => setPaused(false)}
                 aria-label="Hero Banner"
@@ -99,7 +88,7 @@ useEffect(() => {
                                 <img
                                     src={slide.src}
                                     alt="banner"
-                                    className="w-full h-full object-cover object-center"
+                                    className="w-full h-full object-contain object-center" // ✅ object-contain shows FULL image, no cropping
                                     style={{ filter: "brightness(1)" }}
                                 />
                             </div>
@@ -108,11 +97,17 @@ useEffect(() => {
                 })}
 
                 {/* Arrows */}
-                <button onClick={prev_} className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#FF671F] border border-white/20 hover:border-[#FF671F] flex items-center justify-center text-white">
+                <button
+                    onClick={prev_}
+                    className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#FF671F] border border-white/20 hover:border-[#FF671F] flex items-center justify-center text-white"
+                >
                     ◀
                 </button>
 
-                <button onClick={next} className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#FF671F] border border-white/20 hover:border-[#FF671F] flex items-center justify-center text-white">
+                <button
+                    onClick={next}
+                    className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#FF671F] border border-white/20 hover:border-[#FF671F] flex items-center justify-center text-white"
+                >
                     ▶
                 </button>
 
