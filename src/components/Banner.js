@@ -13,34 +13,34 @@ export default function Banner() {
     const timerRef = useRef(null);
 
     // ✅ FIXED FETCH
-    useEffect(() => {
-        const fetchBanners = async () => {
-            try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner`);
-                const data = await res.json();
+   useEffect(() => {
+    const fetchBanners = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner`);
+            const data = await res.json();
 
-                const formatted = data.map((item) => ({
-                    src: item.imageUrl,
-                }));
+            const formatted = data.map((item) => ({
+                src: item.imageUrl,
+            }));
 
-                setSlides(formatted);
-            } catch (error) {
-                console.error("Failed To Fetch banners", error);
-            }
-        };
+            setSlides(formatted);
+        } catch (error) {
+            console.error("Failed To Fetch banners", error);
+        }
+    };
 
-        fetchBanners();
-    }, []); // ✅ ALWAYS empty array
+    fetchBanners();
+}, []); // ✅ ALWAYS empty array
 
-    useEffect(() => {
-        if (paused || slides.length === 0) return;
+useEffect(() => {
+    if (paused || slides.length === 0) return;
 
-        const id = setTimeout(() => {
-            setCurrent(c => (c + 1) % slides.length);
-        }, 5000);
+    const id = setTimeout(() => {
+        setCurrent(c => (c + 1) % slides.length);
+    }, 5000);
 
-        return () => clearTimeout(id);
-    }, [current, paused, slides]);
+    return () => clearTimeout(id);
+}, [current, paused, slides]); // ✅ FIXED (always same)
 
     const goTo = (index) => {
         if (animating || index === current) return;
@@ -53,6 +53,7 @@ export default function Banner() {
         }, 700);
     };
 
+    // ✅ USE slides instead of SLIDES
     const next = () => {
         if (slides.length === 0) return;
         goTo((current + 1) % slides.length);
@@ -63,11 +64,21 @@ export default function Banner() {
         goTo((current - 1 + slides.length) % slides.length);
     };
 
+    useEffect(() => {
+        if (paused || slides.length === 0) return;
+
+        const id = setTimeout(() => {
+            setCurrent(c => (c + 1) % slides.length);
+        }, 5000);
+
+        return () => clearTimeout(id);
+    }, [current, paused, slides]);
+
     return (
         <>
             <section
                 className="relative w-full overflow-hidden"
-                style={{ height: "clamp(350px, 70vw, 700px)" }} // ✅ Same as your original — height untouched
+                style={{  height: "clamp(350px, 70vw, 700px)"}}
                 onMouseEnter={() => setPaused(true)}
                 onMouseLeave={() => setPaused(false)}
                 aria-label="Hero Banner"
@@ -85,18 +96,19 @@ export default function Banner() {
                             style={{ zIndex: isActive ? 2 : 1 }}
                         >
                             <div className="absolute inset-0">
-                                {/* Blurred, zoomed copy fills all empty space — no black bars */}
+                                {/* Mobile-only: blurred fill layer, hidden from sm breakpoint up so desktop is unaffected */}
                                 <img
                                     src={slide.src}
                                     alt=""
                                     aria-hidden="true"
-                                    className="w-full h-full object-cover object-center scale-110 blur-2xl"
+                                    className="sm:hidden w-full h-full object-cover object-center scale-110 blur-2xl"
                                 />
-                                {/* Full, uncropped image on top — nothing gets cut off */}
                                 <img
                                     src={slide.src}
                                     alt="banner"
-                                    className="absolute inset-0 w-full h-full object-contain object-center"
+                                    // ✅ Mobile (default): object-contain shows full image, no cropping
+                                    // ✅ sm and up (desktop/tablet): object-cover, exactly like your original
+                                    className="absolute inset-0 w-full h-full object-contain sm:object-cover object-center"
                                     style={{ filter: "brightness(1)" }}
                                 />
                             </div>
@@ -105,17 +117,11 @@ export default function Banner() {
                 })}
 
                 {/* Arrows */}
-                <button
-                    onClick={prev_}
-                    className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#FF671F] border border-white/20 hover:border-[#FF671F] flex items-center justify-center text-white"
-                >
+                <button onClick={prev_} className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#FF671F] border border-white/20 hover:border-[#FF671F] flex items-center justify-center text-white">
                     ◀
                 </button>
 
-                <button
-                    onClick={next}
-                    className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#FF671F] border border-white/20 hover:border-[#FF671F] flex items-center justify-center text-white"
-                >
+                <button onClick={next} className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-[#FF671F] border border-white/20 hover:border-[#FF671F] flex items-center justify-center text-white">
                     ▶
                 </button>
 
