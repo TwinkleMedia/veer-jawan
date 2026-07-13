@@ -66,7 +66,7 @@ export default function Banner() {
     return (
         <>
             <section
-                className="relative w-full overflow-hidden bg-black"
+                className="relative w-full overflow-hidden"
                 style={{ height: "clamp(350px, 70vw, 700px)" }} // ✅ Same as your original — height untouched
                 onMouseEnter={() => setPaused(true)}
                 onMouseLeave={() => setPaused(false)}
@@ -85,10 +85,18 @@ export default function Banner() {
                             style={{ zIndex: isActive ? 2 : 1 }}
                         >
                             <div className="absolute inset-0">
+                                {/* Blurred, zoomed copy fills all empty space — no black bars */}
+                                <img
+                                    src={slide.src}
+                                    alt=""
+                                    aria-hidden="true"
+                                    className="w-full h-full object-cover object-center scale-110 blur-2xl"
+                                />
+                                {/* Full, uncropped image on top — nothing gets cut off */}
                                 <img
                                     src={slide.src}
                                     alt="banner"
-                                    className="w-full h-full object-contain object-center" // ✅ object-contain shows FULL image, no cropping
+                                    className="absolute inset-0 w-full h-full object-contain object-center"
                                     style={{ filter: "brightness(1)" }}
                                 />
                             </div>
