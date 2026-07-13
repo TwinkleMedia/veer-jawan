@@ -67,7 +67,7 @@ export default function Banner() {
         <>
             <section
                 className="relative w-full overflow-hidden bg-black"
-                style={{ aspectRatio: "16 / 9" }} // ✅ Keeps container shape matching image shape at ALL screen sizes
+                style={{ height: "clamp(350px, 70vw, 700px)" }} // ✅ Same as your original — height untouched
                 onMouseEnter={() => setPaused(true)}
                 onMouseLeave={() => setPaused(false)}
                 aria-label="Hero Banner"
