@@ -170,14 +170,17 @@ export default function EventsCarousel() {
                                         <div className="w-full h-full bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden flex flex-col md:flex-row select-none">
 
                                             {/* Image */}
-                                            <div className="relative w-full md:w-5/12 shrink-0 h-36 md:h-full">
+                                            <div className="relative w-full md:w-5/12 shrink-0 h-36 md:h-full bg-gradient-to-b from-gray-800 to-gray-900">
                                                 <img
                                                     src={ev.image?.url}
                                                     alt={ev.title}
                                                     draggable={false}
-                                                    className="w-full h-full object-cover"
+                                                    className="w-full h-full"
+                                                    // Inline style guarantees object-contain even if a global
+                                                    // CSS reset or stale build tries to force object-fit: cover.
+                                                    style={{ objectFit: "contain", objectPosition: "center" }}
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-transparent" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-transparent pointer-events-none" />
 
                                                 {/* Date badge */}
                                                 <div className="absolute top-2.5 left-2.5 bg-orange-500 rounded-xl px-2 py-1 flex flex-col items-center shadow-md shadow-orange-300/40">
