@@ -58,12 +58,16 @@ function EventCard({ event }) {
         style={{ fontFamily: "'Poppins', sans-serif" }}
       >
         {/* ── Full-bleed image ── */}
-        <div className="relative w-full h-80 bg-gray-100 overflow-hidden">
+        <div className="relative w-full h-80 bg-gradient-to-b from-gray-50 to-gray-100 overflow-hidden">
           {imageUrl ? (
             <img
               src={imageUrl}
               alt={event.title}
-              className="w-full h-full object-contain"
+              className="w-full h-full"
+              // Inline style guarantees object-contain even if a global
+              // CSS reset (e.g. `img { object-fit: cover }`) or a stale
+              // Tailwind build tries to override the utility class.
+              style={{ objectFit: "contain", objectPosition: "center" }}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-100">
