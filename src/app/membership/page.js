@@ -348,7 +348,7 @@ export default function MembershipFormPage() {
       console.log("[Membership] Response body:", data);
 
       if (!res.ok) {
-        setError(data.message || "Something went wrong. Please try again.");
+        setError(data.message || "Something went wrong. Please try again.");0
         setLoading(false);
         return;
       }
