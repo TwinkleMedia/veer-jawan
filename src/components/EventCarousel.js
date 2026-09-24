@@ -176,7 +176,7 @@ export default function EventsCarousel() {
                                                     alt={ev.title}
                                                     draggable={false}
                                                     className="w-full h-full"
-                                                    // Inline style guarantees object-contain even if a global
+                                                    // Inline style guarantees object-contain even if a global 
                                                     // CSS reset or stale build tries to force object-fit: cover.
                                                     style={{ objectFit: "contain", objectPosition: "center" }}
                                                 />

@@ -93,7 +93,7 @@ const RANKS = [
 ];
 
 // ── Constants ──────────────────────────────────────────────────────────────────
-const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
 
 const inputCls =
   "w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white focus:outline-none focus:border-[#293C86] focus:ring-2 focus:ring-[#293C86]/10 transition placeholder-gray-400";
@@ -259,7 +259,7 @@ export default function MembershipFormPage() {
     if (file.size > MAX_FILE_SIZE) {
       const sizeMB = (file.size / 1024 / 1024).toFixed(1);
       setError(
-        `"${fieldName}" is ${sizeMB} MB — please select a file under 2 MB. Tip: use a photo compression app on your phone before uploading.`
+        `"${fieldName}" is ${sizeMB} MB — please select a file under 1 MB. Tip: use a photo compression app on your phone before uploading.`
       );
       // reset the input so the same file can't be re-selected silently
       e.target.value = "";
@@ -312,7 +312,7 @@ export default function MembershipFormPage() {
     for (const { file, label } of fileSizeChecks) {
       if (file.size > MAX_FILE_SIZE) {
         const sizeMB = (file.size / 1024 / 1024).toFixed(1);
-        setError(`"${label}" is ${sizeMB} MB — please select a file under 2 MB.`);
+        setError(`"${label}" is ${sizeMB} MB — please select a file under 1 MB.`);
         return;
       }
     }
@@ -777,7 +777,7 @@ export default function MembershipFormPage() {
               <SectionHeader number="05" title="Photo & Document Uploads" />
               <div className="p-5 sm:p-6">
                 <p className="text-[11px] text-gray-400 mb-4 text-center">
-                  Each file must be <strong className="text-gray-600">under 2 MB</strong>. Compress large phone photos before uploading.
+                  Each file must be <strong className="text-gray-600">under 1 MB</strong>. Compress large phone photos before uploading.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                   <UploadBox
@@ -791,7 +791,7 @@ export default function MembershipFormPage() {
                       setPhotoFile(null);
                       fileInputRef.current.value = "";
                     }}
-                    hint={"JPG/PNG · Max 2MB\n35×45mm recommended"}
+                    hint={"JPG/PNG · Max 1MB\n35×45mm recommended"}
                   />
 
                   <UploadBox
@@ -805,7 +805,7 @@ export default function MembershipFormPage() {
                       setAadharFile(null);
                       aadharInputRef.current.value = "";
                     }}
-                    hint={"JPG/PNG · Max 2MB\nBoth sides if required"}
+                    hint={"JPG/PNG · Max 1MB\nBoth sides if required"}
                   />
 
                   <UploadBox
@@ -819,7 +819,7 @@ export default function MembershipFormPage() {
                       setIdCardFile(null);
                       idCardInputRef.current.value = "";
                     }}
-                    hint={"JPG/PNG · Max 2MB\nClear & legible scan"}
+                    hint={"JPG/PNG · Max 1MB\nClear & legible scan"}
                   />
                 </div>
               </div>
